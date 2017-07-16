@@ -15,11 +15,11 @@ def write_into_file_func(func):
 	myfile.write("##################-----"+func+"------------##################")
 	myfile.write("\n\n\n")
 
-import tweepy
 
 from tweepy import (
 	OAuthHandler,
 	API,
+	Cursor,
 
 )
 
@@ -54,7 +54,7 @@ try:
 
 	write_into_file_func("search(by location)")
 
-	for i in tweepy.Cursor(api.search, geocode=latitude+","+longitude+","+radius).items(200):
+	for i in Cursor(api.search, geocode=latitude+","+longitude+","+radius).items(200):
 		write_into_file_Status(i)
 
 	
