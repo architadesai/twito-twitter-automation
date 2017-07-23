@@ -18,7 +18,7 @@ class ApplicationData(models.Model):
         # if user manually change permissions in twitter.dev.api
 
     def __str__(self):
-        return "%s and %s Application" %(self.username, self.appname)
+        return "%s %s " %(self.username, self.appname)
 
 
 

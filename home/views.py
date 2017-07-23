@@ -3,7 +3,8 @@ from django.shortcuts import (
 
 )
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+
+from .forms import RegisterApp
 
 
 def index(request):
@@ -13,4 +14,12 @@ def index(request):
 @login_required
 def applicationlogin(request):
 
-    return render(request, 'home/appdata.html')
+    form = RegisterApp(request.POST or None)
+
+    if form.is_valid():
+        instance = form.save(commit=False)
+        instance.username = request.user
+        instance.save()
+
+
+    return render(request, 'home/appdata.html', {"form":form})
