@@ -13,4 +13,4 @@ def index(request):
 @login_required
 def applicationlogin(request):
 
-    return HttpResponse("You are authenticated user ...")
+    return render(request, 'home/appdata.html')
