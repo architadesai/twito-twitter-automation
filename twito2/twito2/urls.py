@@ -13,9 +13,9 @@ urlpatterns = [
 
     url(r'^$', index, name="HomePage"),
 
-    url(r'^login/$', applicationlogin, name="ApplicationLogin"),
+    url(r'^dashboard/$', applicationlogin, name="ApplicationLogin"),
 
-    url(r'^user/(?P<appname>\w+)/$', applicationaccess, name="ApplicationAccess"),
+    url(r'^dashboard/(?P<appname>\w+)/$', applicationaccess, name="ApplicationAccess"),
 
 
 ]
@@ -23,3 +23,5 @@ urlpatterns = [
 
 ######################UPDATE login link to specific user name ###############
 ######################UPDATE app link to specific app name###############
+############Also to make sure that login user should not be able to check other user acc by line####################
+################Add login page to beginning, instead of admin login#####################
