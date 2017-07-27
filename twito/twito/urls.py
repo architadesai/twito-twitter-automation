@@ -19,5 +19,9 @@ urlpatterns = [
     url(r'^dashboard/(?P<app_id>[\w]+)/delete/$',
         views.deleteTwitterApp, name='twitterApp'),
 
+    url(r'^dashboard/(?P<app_id>[\w]+)/search/$',
+        views.searchLocationwise, name='searchlocationwise'),
+
+
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

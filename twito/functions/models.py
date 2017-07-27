@@ -19,3 +19,12 @@ class TwitterApp(RandomPrimaryId):
     def get_absolute_url(self):
         return "/dashboard/%s/" % self.id
 
+class LocationSearch(models.Model):
+
+    user = models.ForeignKey(User, db_index=True)
+    AppName = models.ForeignKey(TwitterApp)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    radius = models.FloatField()
+    radiusUnit = models.CharField(max_length=2, default='km', choices=(('km','km'),('mi','mi')))
+

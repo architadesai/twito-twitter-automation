@@ -1,19 +1,24 @@
-#import tablib
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-#from django.utils import timezone
+
 from .models import (
     TwitterApp,
-
+    LocationSearch,
 )
 
 from .forms import (
     TwitterApp_Form,
-
+    SearchLocation_Form,
 )
 
-import tweepy
+from tweepy import(
+    OAuthHandler,
+	API,
+	Cursor,
+)
+
 
 login_url = '/'
 
@@ -39,13 +44,13 @@ def dashboard(request):
             _access_key = request.POST['access_key'].strip()
 
             try:
-                auth = tweepy.OAuthHandler(_consumerKey, _consumerToken)
+                auth = OAuthHandler(_consumerKey, _consumerToken)
                 auth.get_authorization_url()
 
                 auth.set_access_token(_access_token,_access_key)
 
-                api = tweepy.API(auth)
-                api.update_status('tweepy + oauth!')
+                api = API(auth)
+                twitterName = (api.me()).name
 
                 # if consumer token and Access Tokens are valid then only would go further
 
@@ -82,11 +87,91 @@ def dashboard(request):
 @login_required(login_url=login_url)
 def appPage(request, app_id):
 
-    app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
 
-    users = TwitterApp.objects.filter(AppName=app)
+    if request.method == 'POST':
 
-    return render(request, 'app.html', {'app': app, 'users': users})
+        form = SearchLocation_Form(request.POST)
+
+
+        if form.is_valid():
+
+            _latitude = request.POST['latitude']
+            _longitude = request.POST['longitude']
+            _radius = request.POST['radius']
+            _radiusUnit = request.POST['radiusUnit']
+
+            try:
+
+                TwitoApp = get_object_or_404(TwitterApp, id=app_id, user=request.user)
+
+                app = form.save(commit=False)
+                app.user = request.user
+                app.AppName = TwitoApp
+                app.save()
+
+
+
+                auth = OAuthHandler(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken)
+                auth.get_authorization_url()
+
+                auth.set_access_token(TwitoApp.access_token, TwitoApp.access_key)
+
+                api = API(auth)
+
+                StatusObjects = api.search(geocode=str(_latitude) + "," +
+                                                   str(_longitude) + "," +
+                                                   (str(_radius) + _radiusUnit)
+                                           )
+
+
+                return render(request, 'searchlocation.html', {'status': StatusObjects})
+#                return redirect('/dashboard/'+app_id+'/'+'search/')
+
+            except Exception as e:
+
+                print(e)
+                return redirect('/dashboard/'+app_id+'/')
+        else:
+            print(form.errors)
+            return redirect('/dashboard/'+app_id+'/')
+
+    else:
+
+        app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
+
+        users = TwitterApp.objects.filter(AppName=app)
+
+        return render(request, 'app.html', {'app': app, 'users': users})
+
+
+
+@login_required(login_url=login_url)
+def searchLocationwise(request, app_id):
+
+    try:
+
+        app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
+        queryobj = LocationSearch.objects.get(AppName=app, user=request.user)
+
+        auth = OAuthHandler(app.ConsumerKey, app.ConsumerToken)
+        auth.get_authorization_url()
+
+        auth.set_access_token(app.access_token, app.access_key)
+
+        api = API(auth)
+
+        StatusObjects = api.search(geocode=str(queryobj.latitude) + "," +
+                                           str(queryobj.longitude) + "," +
+                                           (str(queryobj.radius)+queryobj.radiusUnit)
+                                   )
+
+        return render(request, 'searchlocation.html', {'status': StatusObjects})
+
+    except Exception as e:
+
+        print(e)
+        return redirect('/dashboard/'+app_id+'/')
+
 
 
 @login_required(login_url=login_url)
@@ -96,3 +181,6 @@ def deleteTwitterApp(request, app_id):
 
     return redirect('/dashboard/')
 
+
+
+#####################MAKE USER AWARE OF ERROR SHOW ERROR MESSAGE BY POP UP MENU ####################
