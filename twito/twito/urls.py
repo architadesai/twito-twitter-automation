@@ -19,16 +19,5 @@ urlpatterns = [
     url(r'^dashboard/(?P<app_id>[\w]+)/delete/$',
         views.deleteTwitterApp, name='twitterApp'),
 
-    url(r'^dashboard/(?P<app_id>[\w]+)/connect_to_twitter/$',
-        views.getTwitterAuthURL, name='appTask'),
-
-    url(r'^dashboard/(?P<app_id>[\w]+)/callback/$',
-        views.twitterCallback, name='appTask'),
-
-    url(r'^dashboard/(?P<app_id>[\w]+)/(?P<user_id>[\w]+)/$',
-        views.taskPage, name='appTask'),
-
-    url(r'^dashboard/(?P<app_id>[\w]+)/(?P<user_id>[\w]+)/delete/$',
-        views.deleteAppUser, name='appTask'),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
