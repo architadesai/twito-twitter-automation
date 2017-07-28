@@ -118,7 +118,7 @@ def appPage(request, app_id):
                 # app.AppName = TwitoApp
                 # app.save()
 
-                return redirect('/dashboard/' + app_id + '/' + 'search/')
+                return redirect('/dashboard/' + app_id + '/search/')
 
 
                 # auth = OAuthHandler(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken)
@@ -170,10 +170,19 @@ def searchLocationwise(request, app_id):
 
         api = API(auth)
 
-        StatusObjects = api.search(geocode=str(request.session.get('latitude')) + "," +
-                                           str(request.session.get('longitude')) + "," +
-                                           (str(request.session.get('radius')))+(request.session.get('radiusUnit'))
-                                   )
+        arg = str(request.session.get('latitude')) + "," +\
+              str(request.session.get('longitude')) + "," +\
+              (str(request.session.get('radius')))+\
+              (request.session.get('radiusUnit'))
+
+#######################IF you change No of Total Page here, then also change total no of pages in
+        ####################searchlocation.html file at line 29###############
+        #TotalPage = 3
+
+        StatusObjects = []
+
+        for StatusObject in Cursor(api.search, geocode=arg).items(400):
+            StatusObjects.append(StatusObject)
 
         #User Object is In Status Object
 
