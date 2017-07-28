@@ -5,7 +5,7 @@ from django.contrib import messages
 
 from .models import (
     TwitterApp,
-    LocationSearch,
+
 )
 
 from .TweepyObjects import (
@@ -106,30 +106,36 @@ def appPage(request, app_id):
 
             try:
 
-                TwitoApp = get_object_or_404(TwitterApp, id=app_id, user=request.user)
+                request.session['latitude'] = _latitude
+                request.session['longitude'] = _longitude
+                request.session['radius'] = _radius
+                request.session['radiusUnit'] = _radiusUnit
 
-                app = form.save(commit=False)
-                app.user = request.user
-                app.AppName = TwitoApp
-                app.save()
+                # TwitoApp = get_object_or_404(TwitterApp, id=app_id, user=request.user)
+                #
+                # app = form.save(commit=False)
+                # app.user = request.user
+                # app.AppName = TwitoApp
+                # app.save()
 
-
-
-                auth = OAuthHandler(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken)
-                auth.get_authorization_url()
-
-                auth.set_access_token(TwitoApp.access_token, TwitoApp.access_key)
-
-                api = API(auth)
-
-                StatusObjects = api.search(geocode=str(_latitude) + "," +
-                                                   str(_longitude) + "," +
-                                                   (str(_radius) + _radiusUnit)
-                                           )
+                return redirect('/dashboard/' + app_id + '/' + 'search/')
 
 
-                return render(request, 'searchlocation.html', {'status': StatusObjects})
-#                return redirect('/dashboard/'+app_id+'/'+'search/')
+                # auth = OAuthHandler(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken)
+                # auth.get_authorization_url()
+                #
+                # auth.set_access_token(TwitoApp.access_token, TwitoApp.access_key)
+                #
+                # api = API(auth)
+                #
+                # StatusObjects = api.search(geocode=str(_latitude) + "," +
+                #                                    str(_longitude) + "," +
+                #                                    (str(_radius) + _radiusUnit)
+                #                            )
+
+
+                #return render(request, 'searchlocation.html', {'status': StatusObjects})
+                #return redirect('/dashboard/'+app_id+'/'+'search/')
 
             except Exception as e:
 
@@ -156,7 +162,6 @@ def searchLocationwise(request, app_id):
 
 
         app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
-        queryobj = LocationSearch.objects.get(AppName=app, user=request.user)
 
         auth = OAuthHandler(app.ConsumerKey, app.ConsumerToken)
         auth.get_authorization_url()
@@ -165,16 +170,14 @@ def searchLocationwise(request, app_id):
 
         api = API(auth)
 
-        StatusObjects = api.search(geocode=str(queryobj.latitude) + "," +
-                                           str(queryobj.longitude) + "," +
-                                           (str(queryobj.radius)+queryobj.radiusUnit)
+        StatusObjects = api.search(geocode=str(request.session.get('latitude')) + "," +
+                                           str(request.session.get('longitude')) + "," +
+                                           (str(request.session.get('radius')))+(request.session.get('radiusUnit'))
                                    )
-
-
 
         #User Object is In Status Object
 
-        return render(request, 'searchlocation.html', {'status': StatusObjects})
+        return render(request, 'searchlocation.html', {'status': StatusObjects,'app':app})
 
     except Exception as e:
 

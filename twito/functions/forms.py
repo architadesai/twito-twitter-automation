@@ -1,7 +1,7 @@
 from django import forms
 from .models import (
     TwitterApp,
-    LocationSearch,
+
 )
 
 
@@ -11,13 +11,14 @@ class TwitterApp_Form(forms.ModelForm):
         fields = ('AppName', 'ConsumerKey', 'ConsumerToken','access_token','access_key')
 
 
-class SearchLocation_Form(forms.ModelForm):
+class SearchLocation_Form(forms.Form):
     class Meta:
-        model = LocationSearch
-        fields = ('latitude','longitude','radius','radiusUnit')
+        latitude = forms.FloatField()
+        longitude = forms.FloatField()
+        radius = forms.CharField()
+        radiusUnit = forms.ChoiceField(choices =(('km','km'),('mi','mi')),label='',initial='',widget=forms.Select(),required=True)
+        # model = LocationSearch
+        # fields = ('latitude','longitude','radius','radiusUnit')
 
 
 
-    # latitude = forms.FloatField()
-    # longitude  = forms.FloatField()
-    # radius = forms.CharField()

@@ -2,8 +2,8 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import TwitterApp, LocationSearch
+from .models import TwitterApp
 
 
 admin.site.register(TwitterApp)
-admin.site.register(LocationSearch)
+#admin.site.register(LocationSearch)
