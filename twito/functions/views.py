@@ -8,6 +8,10 @@ from .models import (
     LocationSearch,
 )
 
+from .TweepyObjects import (
+    Status,
+)
+
 from .forms import (
     TwitterApp_Form,
     SearchLocation_Form,
@@ -149,6 +153,7 @@ def appPage(request, app_id):
 def searchLocationwise(request, app_id):
 
     try:
+        print("**************")
 
         app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
         queryobj = LocationSearch.objects.get(AppName=app, user=request.user)
@@ -165,7 +170,18 @@ def searchLocationwise(request, app_id):
                                            (str(queryobj.radius)+queryobj.radiusUnit)
                                    )
 
-        return render(request, 'searchlocation.html', {'status': StatusObjects})
+
+
+        ParsStatusObjects = []
+
+        for StatusObject in StatusObjects:
+
+            ParsStatusObjects.append(Status(StatusObject.text,
+                                            StatusObject._json['user']['name'],
+                                            StatusObject._json['user']['screen_name'],
+                                            StatusObject.profile_image_url))
+
+        return render(request, 'searchlocation.html', {'status': ParsStatusObjects})
 
     except Exception as e:
 
