@@ -181,7 +181,7 @@ def searchLocationwise(request, app_id):
 
         StatusObjects = []
 
-        for StatusObject in Cursor(api.search, geocode=arg).items(400):
+        for StatusObject in Cursor(api.search, geocode=arg).items(10):
             StatusObjects.append(StatusObject)
 
         #User Object is In Status Object
