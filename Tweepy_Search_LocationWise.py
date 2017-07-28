@@ -23,11 +23,11 @@ from tweepy import (
 
 )
 
-consumer_key = '461XyHMzRdFHY8ZxN8XArPkoG'
-consumer_secret = 'CFMsYLcFOUCEvJ6f9wtAmGjSoivtU5Dqt2NHn8ZfdRKu3fhWh3'
+consumer_key = ''
+consumer_secret = ''
 
-access_token = '794909294168854528-Gx1rbjo7iCGIQ5tGslCPuyCbDEhmD9h'
-access_secret = 'jvtsr4l755InF67FIdrcOGPO1rez2xLWQ0OYkpzsoJtAW'
+access_token = ''
+access_secret = ''
 
 callback_url = "http://google.com"
 
