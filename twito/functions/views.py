@@ -8,9 +8,6 @@ from .models import (
 
 )
 
-from .TweepyObjects import (
-    Status,
-)
 
 from .forms import (
     TwitterApp_Form,
@@ -99,6 +96,8 @@ def appPage(request, app_id):
 
         if form.is_valid():
 
+            _keyword = request.POST['keyword']
+            _lang = request.POST['lang']
             _latitude = request.POST['latitude']
             _longitude = request.POST['longitude']
             _radius = request.POST['radius']
@@ -106,6 +105,8 @@ def appPage(request, app_id):
 
             try:
 
+                request.session['keyword'] = _keyword
+                request.session['lang'] = _lang
                 request.session['latitude'] = _latitude
                 request.session['longitude'] = _longitude
                 request.session['radius'] = _radius
@@ -170,18 +171,18 @@ def searchLocationwise(request, app_id):
 
         api = API(auth)
 
-        arg = str(request.session.get('latitude')) + "," +\
+        arg_key = request.session.get('keyword')
+        arg_lang = request.session.get('lang')
+        arg_geo = str(request.session.get('latitude')) + "," +\
               str(request.session.get('longitude')) + "," +\
               (str(request.session.get('radius')))+\
               (request.session.get('radiusUnit'))
 
-#######################IF you change No of Total Page here, then also change total no of pages in
-        ####################searchlocation.html file at line 29###############
-        #TotalPage = 3
 
         StatusObjects = []
 
-        for StatusObject in Cursor(api.search, geocode=arg).items(10):
+        for StatusObject in Cursor(api.search,q=arg_key,lang=arg_lang,geocode=arg_geo).items(20):
+            StatusObject.user.profile_image_url_https=StatusObject.user.profile_image_url_https.replace('_normal','')
             StatusObjects.append(StatusObject)
 
         #User Object is In Status Object
@@ -203,6 +204,13 @@ def deleteTwitterApp(request, app_id):
     return redirect('/dashboard/')
 
 
+    # https://twitter.com/narendramodi/status/891865991503806464
+    # https://twitter.com/Devchan39963044
 
-#####################MAKE USER AWARE OF ERROR SHOW ERROR MESSAGE BY POP UP MENU ####################
-###################ADD CHOOSE FIELD in radius Unit(km or mi)#############################3
+    #####################MAKE USER AWARE OF ERROR SHOW ERROR MESSAGE BY POP UP MENU ####################
+#DONE ###################ADD CHOOSE FIELD in radius Unit(km or mi)#############################
+########################PAGINATION IN RESULT TWEETS#################################
+#DONE #########################CLEAR PROFILE PHOTO#################################
+############################ALL AUTH#############################################
+##############MAKE SPECIFIC FIELD OF FORM AS REQUIRED##########################
+##################PROVIDE CHECKBOX FOR KEYWORD AND LANG QUERY#####################
