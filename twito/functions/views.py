@@ -5,6 +5,7 @@ from django.contrib import messages
 
 from .models import (
     TwitterApp,
+    TasksList,
 
 )
 
@@ -59,6 +60,9 @@ def dashboard(request):
                 app.user = request.user
                 app.save()
 
+                t = TasksList(user=request.User, AppName=app, TaskName="Application Created")
+                t.save()
+
                 return redirect('/dashboard/')
 
             except Exception as e:
@@ -67,7 +71,7 @@ def dashboard(request):
 
                 messages.warning(
                     request,
-                    '''Error in Consumer Key/Toekn!
+                    '''Error in Consumer Key/Token!
                     Please try again with correct Twitter App Credentials!''')
 
                 return redirect('/dashboard/')
@@ -128,7 +132,7 @@ def appPage(request, app_id):
                 # auth.set_access_token(TwitoApp.access_token, TwitoApp.access_key)
                 #
                 # api = API(auth)
-                #
+
                 # StatusObjects = api.search(geocode=str(_latitude) + "," +
                 #                                    str(_longitude) + "," +
                 #                                    (str(_radius) + _radiusUnit)
@@ -137,6 +141,14 @@ def appPage(request, app_id):
 
                 #return render(request, 'searchlocation.html', {'status': StatusObjects})
                 #return redirect('/dashboard/'+app_id+'/'+'search/')
+
+                # authenticated_user = api.me().screen_name
+                #
+                # trends = api.trends_available()
+                # followers = api.followers_ids(authenticated_user)
+                # friends = api.friends_id(authenticated_user)
+
+
 
             except Exception as e:
 
@@ -150,9 +162,7 @@ def appPage(request, app_id):
 
         app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
 
-        users = TwitterApp.objects.filter(AppName=app)
-
-        return render(request, 'app.html', {'app': app, 'users': users})
+        return render(request, 'app.html', {'app': app,})
 
 
 
@@ -163,6 +173,9 @@ def searchLocationwise(request, app_id):
 
 
         app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
+
+        t = TasksList(user=request.User, AppName=app, TaskName="Search by User")
+        t.save()
 
         auth = OAuthHandler(app.ConsumerKey, app.ConsumerToken)
         auth.get_authorization_url()
@@ -199,7 +212,13 @@ def searchLocationwise(request, app_id):
 @login_required(login_url=login_url)
 def deleteTwitterApp(request, app_id):
 
-    get_object_or_404(TwitterApp, id=app_id, user=request.user).delete()
+
+    app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
+
+    t = TasksList(user=request.user, AppName=app, TaskName="Application Deleted")
+    t.save()
+
+    app.delete()
 
     return redirect('/dashboard/')
 
@@ -214,3 +233,18 @@ def deleteTwitterApp(request, app_id):
 ############################ALL AUTH#############################################
 ##############MAKE SPECIFIC FIELD OF FORM AS REQUIRED##########################
 ##################PROVIDE CHECKBOX FOR KEYWORD AND LANG QUERY#####################
+######################EVEN USER AND APP IS DELETED TASK TABLE SHOULD CONTAIN THEIR RECORDS###################
+
+
+
+##########################THINGS TO DISPLAY##############################
+    #authenticated user's profile #me()
+    #User of Application(More than one user possible for one application)
+    #followers    #followers_ids
+    # #when particular user is clicked #get_user (returns user all info)
+    #friends       #friends_ids
+    #User of Their App (they might or might not be either followers or friends)
+    #list of tasks (our Task database objects )
+    #search by location  #search
+    #search by tag/message/username/tweet and specific language #search_user  #search
+    #Direct Messages (Sent by me && Sent to me) #direct_messages #sent_direct_messages

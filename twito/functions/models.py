@@ -28,3 +28,14 @@ class TwitterApp(RandomPrimaryId):
 #     radius = models.FloatField()
 #     radiusUnit = models.CharField(max_length=2, default='km', choices=(('km','km'),('mi','mi')))
 #     SearchTime = models.DateTimeField(auto_now=True)
+
+#def get_user():
+
+
+
+class TasksList(models.Model):
+
+    user = models.ForeignKey(User, db_index=True, on_delete=models.SET_NULL, null=True)
+    AppName = models.ForeignKey(TwitterApp, db_index=True, on_delete=models.SET_NULL, null=True)
+    TaskName = models.CharField(max_length=200)
+    Time = models.DateTimeField(auto_now_add=True, db_index=True)
