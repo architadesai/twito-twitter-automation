@@ -60,7 +60,7 @@ def dashboard(request):
                 app.user = request.user
                 app.save()
 
-                t = TasksList(user=request.User, AppName=app, TaskName="Application Created")
+                t = TasksList(user=request.user, AppName=app, TaskName="Application Created")
                 t.save()
 
                 return redirect('/dashboard/')
@@ -160,9 +160,33 @@ def appPage(request, app_id):
 
     else:
 
-        app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
+        TwitoApp = get_object_or_404(TwitterApp, id=app_id, user=request.user)
 
-        return render(request, 'app.html', {'app': app,})
+        auth = OAuthHandler(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken)
+        auth.get_authorization_url()
+
+        auth.set_access_token(TwitoApp.access_token, TwitoApp.access_key)
+
+        api = API(auth)
+
+        username = (api.me()).screen_name
+
+        #trends = api.trends_available()
+        followers = api.followers(username)  #returns user object
+        friends = api.friends(username)      #returns user object
+        tweets = api.user_timeline()             #returns status object
+        #lists =
+        likes = api.favorites(username)          #returns status object
+        #messages = api.direct_messages()
+        tasks = TasksList.objects.filter(AppName=TwitoApp)      #returns TaskList objects as Queryset
+
+
+        return render(request, 'app.html', {'app': TwitoApp, 'followers':followers,
+                                                  'friends':friends,'tweets':tweets,'likes':likes,
+                                                  'tasks':tasks})
+
+
+
 
 
 
@@ -174,7 +198,7 @@ def searchLocationwise(request, app_id):
 
         app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
 
-        t = TasksList(user=request.User, AppName=app, TaskName="Search by User")
+        t = TasksList(user=request.user, AppName=app, TaskName="Search by User")
         t.save()
 
         auth = OAuthHandler(app.ConsumerKey, app.ConsumerToken)
@@ -234,6 +258,8 @@ def deleteTwitterApp(request, app_id):
 ##############MAKE SPECIFIC FIELD OF FORM AS REQUIRED##########################
 ##################PROVIDE CHECKBOX FOR KEYWORD AND LANG QUERY#####################
 ######################EVEN USER AND APP IS DELETED TASK TABLE SHOULD CONTAIN THEIR RECORDS###################
+#################FOR LOOP IS REPEATED IN APP.HTML FOR SAME STATUS OR SAME USER OBJECT REMOVE IT####################
+
 
 
 
