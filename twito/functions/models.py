@@ -39,3 +39,17 @@ class TasksList(models.Model):
     AppName = models.ForeignKey(TwitterApp, db_index=True, on_delete=models.SET_NULL, null=True)
     TaskName = models.CharField(max_length=200)
     Time = models.DateTimeField(auto_now_add=True, db_index=True)
+
+
+# class UserInfo(models.Model):
+#
+#     user = models.OneToOneField(User, db_index=True)
+#     TwitterId = models.IntegerField()
+#     UserName = models.CharField(max_length=100)
+#     ScreenName = models.CharField(max_length=150)
+#     friends =
+#     followers =
+#     TwitterProfile =
+#     description =
+#     tweets =
+#     likes =

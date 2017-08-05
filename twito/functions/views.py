@@ -259,7 +259,7 @@ def deleteTwitterApp(request, app_id):
 ##################PROVIDE CHECKBOX FOR KEYWORD AND LANG QUERY#####################
 ######################EVEN USER AND APP IS DELETED TASK TABLE SHOULD CONTAIN THEIR RECORDS###################
 #################FOR LOOP IS REPEATED IN APP.HTML FOR SAME STATUS OR SAME USER OBJECT REMOVE IT####################
-
+#################IF TAB HAVE NONE RESULT IT SHOULD SHOW SOME SPECIFIC PAGE#######################
 
 
 
