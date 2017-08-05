@@ -193,43 +193,63 @@ def appPage(request, app_id):
 @login_required(login_url=login_url)
 def searchLocationwise(request, app_id):
 
-    try:
+    app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
+
+    auth = OAuthHandler(app.ConsumerKey, app.ConsumerToken)
+    auth.get_authorization_url()
+
+    auth.set_access_token(app.access_token, app.access_key)
+
+    api = API(auth)
+
+    SearchId = {}  # ["userId":"MessageId"]
+
+    if request.method == 'POST':
 
 
-        app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
+        for i in SearchId.values():
+            api.create_favorite(i)
 
-        t = TasksList(user=request.user, AppName=app, TaskName="Search by User")
+
+        t = TasksList(user=request.user, AppName=app, TaskName="Like top 10 tweets")
         t.save()
 
-        auth = OAuthHandler(app.ConsumerKey, app.ConsumerToken)
-        auth.get_authorization_url()
 
-        auth.set_access_token(app.access_token, app.access_key)
-
-        api = API(auth)
-
-        arg_key = request.session.get('keyword')
-        arg_lang = request.session.get('lang')
-        arg_geo = str(request.session.get('latitude')) + "," +\
-              str(request.session.get('longitude')) + "," +\
-              (str(request.session.get('radius')))+\
-              (request.session.get('radiusUnit'))
-
-
-        StatusObjects = []
-
-        for StatusObject in Cursor(api.search,q=arg_key,lang=arg_lang,geocode=arg_geo).items(20):
-            StatusObject.user.profile_image_url_https=StatusObject.user.profile_image_url_https.replace('_normal','')
-            StatusObjects.append(StatusObject)
-
-        #User Object is In Status Object
-
-        return render(request, 'searchlocation.html', {'status': StatusObjects,'app':app})
-
-    except Exception as e:
-
-        print(e)
         return redirect('/dashboard/'+app_id+'/')
+
+    else:
+        try:
+
+
+
+            t = TasksList(user=request.user, AppName=app, TaskName="Search by User")
+            t.save()
+
+
+            arg_key = request.session.get('keyword')
+            arg_lang = request.session.get('lang')
+            arg_geo = str(request.session.get('latitude')) + "," +\
+                  str(request.session.get('longitude')) + "," +\
+                  (str(request.session.get('radius')))+\
+                  (request.session.get('radiusUnit'))
+
+            StatusObjects = []
+
+            for StatusObject in Cursor(api.search,q=arg_key,lang=arg_lang,geocode=arg_geo).items(20):
+                StatusObjects.append(StatusObject)
+
+                if StatusObject['user']['screen_name'] not in SearchId.keys():
+
+                    SearchId[[StatusObject['user']['screen_name']]] = str(StatusObject.id)
+
+            #User Object is In Status Object
+
+            return render(request, 'searchlocation.html', {'status': StatusObjects,'app':app})
+
+        except Exception as e:
+
+            print(e)
+            return redirect('/dashboard/'+app_id+'/')
 
 
 
