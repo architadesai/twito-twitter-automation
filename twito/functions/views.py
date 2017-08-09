@@ -238,7 +238,7 @@ def searchLocationwise(request, app_id):
             for StatusObject in Cursor(api.search,q=arg_key,lang=arg_lang,geocode=arg_geo).items(20):
                 StatusObjects.append(StatusObject)
 
-                if StatusObject['user']['screen_name'] not in SearchId.keys():
+                if StatusObject['user']['screen_name'] not in SearchId.keys() and len(SearchId.keys()) < 10:
 
                     SearchId[[StatusObject['user']['screen_name']]] = str(StatusObject.id)
 
