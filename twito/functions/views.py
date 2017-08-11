@@ -116,37 +116,8 @@ def appPage(request, app_id):
                 request.session['radius'] = _radius
                 request.session['radiusUnit'] = _radiusUnit
 
-                # TwitoApp = get_object_or_404(TwitterApp, id=app_id, user=request.user)
-                #
-                # app = form.save(commit=False)
-                # app.user = request.user
-                # app.AppName = TwitoApp
-                # app.save()
 
                 return redirect('/dashboard/' + app_id + '/search/')
-
-
-                # auth = OAuthHandler(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken)
-                # auth.get_authorization_url()
-                #
-                # auth.set_access_token(TwitoApp.access_token, TwitoApp.access_key)
-                #
-                # api = API(auth)
-
-                # StatusObjects = api.search(geocode=str(_latitude) + "," +
-                #                                    str(_longitude) + "," +
-                #                                    (str(_radius) + _radiusUnit)
-                #                            )
-
-
-                #return render(request, 'searchlocation.html', {'status': StatusObjects})
-                #return redirect('/dashboard/'+app_id+'/'+'search/')
-
-                # authenticated_user = api.me().screen_name
-                #
-                # trends = api.trends_available()
-                # followers = api.followers_ids(authenticated_user)
-                # friends = api.friends_id(authenticated_user)
 
 
 
@@ -171,6 +142,8 @@ def appPage(request, app_id):
 
         username = (api.me()).screen_name
 
+
+        #to get all followers or friends use cursor
         #trends = api.trends_available()
         followers = api.followers(username)  #returns user object
         friends = api.friends(username)      #returns user object
@@ -204,20 +177,8 @@ def searchLocationwise(request, app_id):
 
     SearchId = {}  # ["userId":"MessageId"]
 
-    if request.method == 'POST':
+    if request.method != 'POST':
 
-
-        for i in SearchId.values():
-            api.create_favorite(i)
-
-
-        t = TasksList(user=request.user, AppName=app, TaskName="Like top 10 tweets")
-        t.save()
-
-
-        return redirect('/dashboard/'+app_id+'/')
-
-    else:
         try:
 
 
@@ -242,9 +203,40 @@ def searchLocationwise(request, app_id):
 
                     SearchId[StatusObject.user.screen_name] = str(StatusObject.id)
 
-            #User Object is In Status Object
+            # print(SearchId.keys())
+            # print("************")
+            # print(SearchId.values())
+            # #User Object is In Status Object
+
+            request.session['SearchId'] = SearchId
+
 
             return render(request, 'searchlocation.html', {'status': StatusObjects,'app':app})
+
+        except Exception as e:
+
+            print(e)
+            return redirect('/dashboard/'+app_id+'/')
+
+    else:
+
+        try:
+
+            SearchId = request.session.get('SearchId')
+
+            print(SearchId.values())
+
+
+            for i in SearchId.values():
+                #print(i)
+                print(api.create_favorite(i).id)    #create_favorite method returns status
+                #print(y.text)
+
+            t = TasksList(user=request.user, AppName=app, TaskName="Like top 10 tweets")
+            t.save()
+
+            #print("Task completed")
+            return redirect('/dashboard/'+app_id+'/')
 
         except Exception as e:
 
@@ -280,6 +272,7 @@ def deleteTwitterApp(request, app_id):
 ######################EVEN USER AND APP IS DELETED TASK TABLE SHOULD CONTAIN THEIR RECORDS###################
 #################FOR LOOP IS REPEATED IN APP.HTML FOR SAME STATUS OR SAME USER OBJECT REMOVE IT####################
 #################IF TAB HAVE NONE RESULT IT SHOULD SHOW SOME SPECIFIC PAGE#######################
+#################FOR URL IN SEARCHLOCATION.HTML ADD ALSO FOR IPHONE######################
 
 
 
