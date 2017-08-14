@@ -46,4 +46,11 @@ class SearchLocation_Form(forms.Form):
         # model = LocationSearch
         # fields = ('latitude','longitude','radius','radiusUnit')
 
+class PerformTask_Form(forms.Form):
+
+    class Meta:
+
+        likeTweets = forms.BooleanField(required=False)
+        followUsers = forms.BooleanField(required=False)
+        retweetTweets = forms.BooleanField(required=False)
 

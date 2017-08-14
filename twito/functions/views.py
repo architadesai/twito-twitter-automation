@@ -13,6 +13,7 @@ from .models import (
 from .forms import (
     TwitterApp_Form,
     SearchLocation_Form,
+    PerformTask_Form
 )
 
 from tweepy import(
@@ -222,18 +223,43 @@ def searchLocationwise(request, app_id):
 
         try:
 
+            form = PerformTask_Form(request.POST)
+
+
+
+            _like = request.POST.get('likeTweets', None)
+            _follow = request.POST.get('followUsers', None)
+            _retweet = request.POST.get('retweetTweets', None)
+
+
             SearchId = request.session.get('SearchId')
 
-            print(SearchId.values())
+            print("Search ..", SearchId.values())
 
 
-            for i in SearchId.values():
+            for i in SearchId.keys():
                 #print(i)
-                print(api.create_favorite(i).id)    #create_favorite method returns status
-                #print(y.text)
+                if _like:
+                    print("like")
+                    print(api.create_favorite(SearchId[i]).id)  # create_favorite method returns status
+                if _follow:
+                    print("follow")
+                    print(api.create_friendship(i).screen_name)  #follow specific user
+                if _retweet:
+                    print("retweet")
+                    print(api.retweet(SearchId[i]).id)  # retweet specific tweet
 
-            t = TasksList(user=request.user, AppName=app, TaskName="Like top 10 tweets")
-            t.save()
+            if _like:
+                t = TasksList(user=request.user, AppName=app, TaskName="Like top 10 tweets")
+                t.save()
+
+            if _follow:
+                t = TasksList(user=request.user, AppName=app, TaskName="Follow top 10 Users")
+                t.save()
+
+            if _retweet:
+                t = TasksList(user=request.user, AppName=app, TaskName="Retweet top 10 tweets")
+                t.save()
 
             #print("Task completed")
             return redirect('/dashboard/'+app_id+'/')
@@ -273,8 +299,9 @@ def deleteTwitterApp(request, app_id):
 #################FOR LOOP IS REPEATED IN APP.HTML FOR SAME STATUS OR SAME USER OBJECT REMOVE IT####################
 #################IF TAB HAVE NONE RESULT IT SHOULD SHOW SOME SPECIFIC PAGE#######################
 #################FOR URL IN SEARCHLOCATION.HTML ADD ALSO FOR IPHONE######################
+###################SOME TWEETS ARE NOT RETRIEVE WHOLE TEXT MESSAGE########################
 
-
+#####################BEFORE RETWEETING OR LIKEING ANY TWEETS CHECK IF IT ALREADY LIKE OR NOT######################
 
 ##########################THINGS TO DISPLAY##############################
     #authenticated user's profile #me()

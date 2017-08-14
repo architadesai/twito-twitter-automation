@@ -5,6 +5,7 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twito/db.sqlite3" afterPath="$PROJECT_DIR$/twito/db.sqlite3" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twito/twito-template" afterPath="$PROJECT_DIR$/twito/twito-template" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twito/functions/forms.py" afterPath="$PROJECT_DIR$/twito/functions/forms.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twito/functions/views.py" afterPath="$PROJECT_DIR$/twito/functions/views.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,11 +18,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/twito/functions/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="213" column="37" lean-forward="true" selection-start-line="213" selection-start-column="37" selection-end-line="213" selection-end-column="37" />
+            <state relative-caret-position="286">
+              <caret line="246" column="40" lean-forward="true" selection-start-line="246" selection-start-column="40" selection-end-line="246" selection-end-column="40" />
               <folding>
                 <element signature="e#1#58#0" expanded="true" />
               </folding>
@@ -29,11 +30,41 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="searchlocation.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="forms.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/twito/functions/forms.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="451">
+              <caret line="52" column="40" lean-forward="true" selection-start-line="52" selection-start-column="40" selection-end-line="52" selection-end-column="40" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/twito/functions/models.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="555">
+              <caret line="41" column="0" lean-forward="true" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="searchlocation.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/twito/twito-template/searchlocation.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="181">
-              <caret line="116" column="101" lean-forward="false" selection-start-line="116" selection-start-column="101" selection-end-line="116" selection-end-column="101" />
+            <state relative-caret-position="240">
+              <caret line="223" column="42" lean-forward="true" selection-start-line="223" selection-start-column="42" selection-end-line="223" selection-end-column="42" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="app.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/twito/twito-template/app.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="770">
+              <caret line="409" column="20" lean-forward="true" selection-start-line="409" selection-start-column="20" selection-end-line="409" selection-end-column="20" />
               <folding />
             </state>
           </provider>
@@ -70,8 +101,9 @@
         <option value="$PROJECT_DIR$/home/models.py" />
         <option value="$PROJECT_DIR$/twito2/urls.py" />
         <option value="$PROJECT_DIR$/home/views.py" />
-        <option value="$PROJECT_DIR$/twito/functions/views.py" />
+        <option value="$PROJECT_DIR$/twito/functions/forms.py" />
         <option value="$PROJECT_DIR$/twito/twito-template/searchlocation.html" />
+        <option value="$PROJECT_DIR$/twito/functions/views.py" />
       </list>
     </option>
   </component>
@@ -101,7 +133,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -166,6 +197,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -468,14 +500,6 @@
     <entry file="file://$PROJECT_DIR$/twito/twito-template/css/mdb.css" />
     <entry file="file://$PROJECT_DIR$/twito/twito-template/css/bootstrap.css" />
     <entry file="file://$PROJECT_DIR$/twito/functions/TweepyObjects.py" />
-    <entry file="file://$PROJECT_DIR$/twito/functions/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="15" column="12" lean-forward="false" selection-start-line="15" selection-start-column="12" selection-end-line="15" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/twito/functions/admin.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
@@ -483,21 +507,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/twito/functions/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="750">
-          <caret line="54" column="13" lean-forward="false" selection-start-line="43" selection-start-column="2" selection-end-line="54" selection-end-column="13" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/twito/twito-template/dashboard.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="575">
           <caret line="161" column="0" lean-forward="true" selection-start-line="115" selection-start-column="0" selection-end-line="161" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -513,29 +526,43 @@
     <entry file="file://$PROJECT_DIR$/home/views.py" />
     <entry file="file://$PROJECT_DIR$/twito/twito-template/app.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="303" column="0" lean-forward="false" selection-start-line="303" selection-start-column="0" selection-end-line="303" selection-end-column="0" />
-          <folding>
-            <element signature="e#11501#11508#1#HTML" expanded="false" />
-          </folding>
+        <state relative-caret-position="770">
+          <caret line="409" column="20" lean-forward="true" selection-start-line="409" selection-start-column="20" selection-end-line="409" selection-end-column="20" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/twito/functions/views.py">
+    <entry file="file://$PROJECT_DIR$/twito/functions/forms.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="213" column="37" lean-forward="true" selection-start-line="213" selection-start-column="37" selection-end-line="213" selection-end-column="37" />
-          <folding>
-            <element signature="e#1#58#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="451">
+          <caret line="52" column="40" lean-forward="true" selection-start-line="52" selection-start-column="40" selection-end-line="52" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/twito/functions/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="555">
+          <caret line="41" column="0" lean-forward="true" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/twito/twito-template/searchlocation.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
-          <caret line="116" column="101" lean-forward="false" selection-start-line="116" selection-start-column="101" selection-end-line="116" selection-end-column="101" />
+        <state relative-caret-position="240">
+          <caret line="223" column="42" lean-forward="true" selection-start-line="223" selection-start-column="42" selection-end-line="223" selection-end-column="42" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/twito/functions/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="286">
+          <caret line="246" column="40" lean-forward="true" selection-start-line="246" selection-start-column="40" selection-end-line="246" selection-end-column="40" />
+          <folding>
+            <element signature="e#1#58#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
