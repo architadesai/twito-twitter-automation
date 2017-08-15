@@ -9,7 +9,8 @@ git clone --recursive https://github.com/ArchitaDesai/twito-template
 ```
 
 ## Run twito
-Now you've got all the required content for twito
+Now you've got all the required content for twito.
+
 Go one directory back and then activate the environment
 ```
 cd ..
