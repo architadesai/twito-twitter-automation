@@ -309,10 +309,10 @@ def searchLocationwise(request, app_id):
 
                     try:
                         print("retweet", end=" - ")
-                        print(api.retweet(SearchId[i]).id)  # retweet specific tweet
+                        print((api.retweet(SearchId[i])).id)  # retweet specific tweet
 
                     except Exception as e:
-                        print("already retweeted")
+                        print("Already retweeted")
                         pass
 
             if _like:
@@ -367,7 +367,8 @@ def deleteTwitterApp(request, app_id):
 #DONE #################FOR URL IN SEARCHLOCATION.HTML ADD ALSO FOR IPHONE######################
 ###################SOME TWEETS ARE NOT RETRIEVE WHOLE TEXT MESSAGE########################
 
-#####################BEFORE RETWEETING OR LIKEING ANY TWEETS CHECK IF IT ALREADY LIKE OR NOT######################
+#####################BEFORE RETWEETING  ################
+#DONE ################### LIKEING ANY TWEETS CHECK IF IT ALREADY LIKE OR NOT######################
 
 ##########################THINGS TO DISPLAY##############################
     #authenticated user's profile #me()
