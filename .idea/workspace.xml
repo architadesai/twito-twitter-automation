@@ -4,8 +4,6 @@
     <list default="true" id="3a26a062-9487-4422-8d31-6fc99ebd4e58" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twito/db.sqlite3" afterPath="$PROJECT_DIR$/twito/db.sqlite3" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twito/twito-template" afterPath="$PROJECT_DIR$/twito/twito-template" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twito/functions/forms.py" afterPath="$PROJECT_DIR$/twito/functions/forms.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twito/functions/views.py" afterPath="$PROJECT_DIR$/twito/functions/views.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,8 +19,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/twito/functions/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="511">
-              <caret line="281" column="51" lean-forward="false" selection-start-line="281" selection-start-column="51" selection-end-line="281" selection-end-column="51" />
+            <state relative-caret-position="361">
+              <caret line="291" column="32" lean-forward="false" selection-start-line="291" selection-start-column="32" selection-end-line="291" selection-end-column="32" />
               <folding>
                 <element signature="e#1#58#0" expanded="true" />
               </folding>
@@ -43,8 +41,8 @@
       <file leaf-file-name="app.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/twito/twito-template/app.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="127" column="0" lean-forward="false" selection-start-line="127" selection-start-column="0" selection-end-line="127" selection-end-column="0" />
+            <state relative-caret-position="180">
+              <caret line="139" column="39" lean-forward="false" selection-start-line="139" selection-start-column="39" selection-end-line="139" selection-end-column="39" />
               <folding>
                 <element signature="n#style#0;n#img#0;n#div#0;n#h6#0;n#div#0;n#div#0;n#div#1;n#div#0;n#div#3;n#div#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <marker date="1502780910625" expanded="false" signature="8987:9012" ph="..." />
@@ -66,6 +64,7 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>like top</find>
+      <find>favorite</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -417,7 +416,7 @@
     <frame x="0" y="0" width="1360" height="764" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19440353" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.05154639" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -531,17 +530,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/twito/twito-template/app.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="127" column="0" lean-forward="false" selection-start-line="127" selection-start-column="0" selection-end-line="127" selection-end-column="0" />
-          <folding>
-            <element signature="n#style#0;n#img#0;n#div#0;n#h6#0;n#div#0;n#div#0;n#div#1;n#div#0;n#div#3;n#div#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <marker date="1502780910625" expanded="false" signature="8987:9012" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/twito/twito-template/searchlocation.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="451">
@@ -550,10 +538,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/twito/twito-template/app.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="139" column="39" lean-forward="false" selection-start-line="139" selection-start-column="39" selection-end-line="139" selection-end-column="39" />
+          <folding>
+            <element signature="n#style#0;n#img#0;n#div#0;n#h6#0;n#div#0;n#div#0;n#div#1;n#div#0;n#div#3;n#div#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <marker date="1502780910625" expanded="false" signature="8987:9012" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/twito/functions/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="511">
-          <caret line="281" column="51" lean-forward="false" selection-start-line="281" selection-start-column="51" selection-end-line="281" selection-end-column="51" />
+        <state relative-caret-position="361">
+          <caret line="291" column="32" lean-forward="false" selection-start-line="291" selection-start-column="32" selection-end-line="291" selection-end-column="32" />
           <folding>
             <element signature="e#1#58#0" expanded="true" />
           </folding>

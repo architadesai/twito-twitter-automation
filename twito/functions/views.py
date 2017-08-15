@@ -249,25 +249,35 @@ def searchLocationwise(request, app_id):
             # tweets_ids = request.session.get('tweets_ids')
             # likes_ids = request.session.get('likes_ids')
 
-            likes_ids = []
-
-            for i in api.favorites(username):
-                likes_ids.append(i.id_str)
-
-            print("favorites...",likes_ids)
+            # likes_ids = []
+            # likes = api.favorites(username)
+            #
+            # for i in likes:
+            #     likes_ids.append(i.id_str)
+            #
+            # print("favorites...",likes_ids)
 
             for i in SearchId.keys():
                 #print(i)
                 if _like:
 
-                    if SearchId[i] not in likes_ids:
+                    # if SearchId[i] not in likes_ids:
+                    #
+                    #     print("like", SearchId[i], end=" - ")
+                    #     print((api.create_favorite(SearchId[i])).id_str)  # create_favorite method returns status
+                    #     likes_ids.append(SearchId[i])
+                    #
+                    # else:
+                    #     print("already like", SearchId[i])
+                    # print("favorites...", likes_ids)
 
+                    try:
                         print("like", SearchId[i], end=" - ")
-                        print(api.create_favorite(SearchId[i]).id)  # create_favorite method returns status
-                        likes_ids.append(SearchId[i])
+                        print((api.create_favorite(SearchId[i])).id_str)  # create_favorite method returns status
 
-                    else:
-                        print("already like", SearchId[i])
+                    except Exception as e:
+                        print("Already like")
+                        pass
 
                 if _follow:
 
@@ -279,15 +289,31 @@ def searchLocationwise(request, app_id):
                     #     print("already follow", i)
 
                     if (api.show_friendship(source_screen_name=username, target_id=i))[1].followed_by:
-                        print("already follow ", i)
+                        print("Already follow ", i)
                     else:
                         print("follow", i, end=" - ")
                         print(api.create_friendship(i).screen_name)  #follow specific user
 
+                    #it doesn't return error if user is already following to destination user
+                        #and it works same without error whether user is following or not
+                        #so we don't require to change, can remove upper feature
+                    # try:
+                    #     print("follow", i, end=" - ")
+                    #     print(api.create_friendship(i).screen_name)  #follow specific user
+                    # except Exception as e:
+                    #     print("Already follow")
+                    #     pass
+
+
                 if _retweet:
 
-                    print("retweet", end=" - ")
-                    print(api.retweet(SearchId[i]).id)  # retweet specific tweet
+                    try:
+                        print("retweet", end=" - ")
+                        print(api.retweet(SearchId[i]).id)  # retweet specific tweet
+
+                    except Exception as e:
+                        print("already retweeted")
+                        pass
 
             if _like:
                 t = TasksList(user=request.user, AppName=app, TaskName="Like top 10 tweets")
