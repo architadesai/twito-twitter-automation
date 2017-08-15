@@ -143,16 +143,26 @@ def appPage(request, app_id):
 
         username = (api.me()).screen_name
 
-
+######objects to pass to html
         #to get all followers or friends use cursor
         #trends = api.trends_available()
         followers = api.followers(username)  #returns user object
+        #followers_ids = api.followers_ids(username)
         friends = api.friends(username)      #returns user object
+
         tweets = api.user_timeline()             #returns status object
+
         #lists =
         likes = api.favorites(username)          #returns status object
+
         #messages = api.direct_messages()
         tasks = TasksList.objects.filter(AppName=TwitoApp)      #returns TaskList objects as Queryset
+
+
+        #request.session['followers_ids'] = followers_ids
+        # request.session['friends_sname'] = friends_sname
+        # request.session['tweets_ids'] = tweets_id
+        # request.session['likes_ids'] = likes_ids
 
 
         return render(request, 'app.html', {'app': TwitoApp, 'followers':followers,
@@ -178,6 +188,9 @@ def searchLocationwise(request, app_id):
 
     SearchId = {}  # ["userId":"MessageId"]
 
+    total_search_result = 10
+    perform_task_on_tweets = 10
+
     if request.method != 'POST':
 
         try:
@@ -197,17 +210,13 @@ def searchLocationwise(request, app_id):
 
             StatusObjects = []
 
-            for StatusObject in Cursor(api.search,q=arg_key,lang=arg_lang,geocode=arg_geo).items(20):
+            for StatusObject in Cursor(api.search,q=arg_key,lang=arg_lang,geocode=arg_geo).items(total_search_result):
                 StatusObjects.append(StatusObject)
 
-                if StatusObject.user.screen_name not in SearchId.keys() and len(SearchId.keys()) < 10:
+                if StatusObject.user.id_str not in SearchId.keys() and len(SearchId.keys()) < perform_task_on_tweets:
 
-                    SearchId[StatusObject.user.screen_name] = str(StatusObject.id)
+                    SearchId[StatusObject.user.id_str] = str(StatusObject.id_str)
 
-            # print(SearchId.keys())
-            # print("************")
-            # print(SearchId.values())
-            # #User Object is In Status Object
 
             request.session['SearchId'] = SearchId
 
@@ -225,7 +234,7 @@ def searchLocationwise(request, app_id):
 
             form = PerformTask_Form(request.POST)
 
-
+            username = api.me().screen_name
 
             _like = request.POST.get('likeTweets', None)
             _follow = request.POST.get('followUsers', None)
@@ -236,17 +245,48 @@ def searchLocationwise(request, app_id):
 
             print("Search ..", SearchId.values())
 
+            # friends_sname = request.session.get('friends_sname')
+            # tweets_ids = request.session.get('tweets_ids')
+            # likes_ids = request.session.get('likes_ids')
+
+            likes_ids = []
+
+            for i in api.favorites(username):
+                likes_ids.append(i.id_str)
+
+            print("favorites...",likes_ids)
 
             for i in SearchId.keys():
                 #print(i)
                 if _like:
-                    print("like")
-                    print(api.create_favorite(SearchId[i]).id)  # create_favorite method returns status
+
+                    if SearchId[i] not in likes_ids:
+
+                        print("like", SearchId[i], end=" - ")
+                        print(api.create_favorite(SearchId[i]).id)  # create_favorite method returns status
+                        likes_ids.append(SearchId[i])
+
+                    else:
+                        print("already like", SearchId[i])
+
                 if _follow:
-                    print("follow")
-                    print(api.create_friendship(i).screen_name)  #follow specific user
+
+                    # if i not in friends_ids:
+                    #     print("follow", i, end=" - ")
+                    #     print(api.create_friendship(i).screen_name)  #follow specific user
+                    #     friends_ids.append(i)
+                    # else:
+                    #     print("already follow", i)
+
+                    if (api.show_friendship(source_screen_name=username, target_id=i))[1].followed_by:
+                        print("already follow ", i)
+                    else:
+                        print("follow", i, end=" - ")
+                        print(api.create_friendship(i).screen_name)  #follow specific user
+
                 if _retweet:
-                    print("retweet")
+
+                    print("retweet", end=" - ")
                     print(api.retweet(SearchId[i]).id)  # retweet specific tweet
 
             if _like:
@@ -288,17 +328,17 @@ def deleteTwitterApp(request, app_id):
     # https://twitter.com/narendramodi/status/891865991503806464
     # https://twitter.com/Devchan39963044
 
-    #####################MAKE USER AWARE OF ERROR SHOW ERROR MESSAGE BY POP UP MENU ####################
+#####################MAKE USER AWARE OF ERROR SHOW ERROR MESSAGE BY POP UP MENU ####################
 #DONE ###################ADD CHOOSE FIELD in radius Unit(km or mi)#############################
 ########################PAGINATION IN RESULT TWEETS#################################
 #DONE #########################CLEAR PROFILE PHOTO#################################
 ############################ALL AUTH#############################################
-##############MAKE SPECIFIC FIELD OF FORM AS REQUIRED##########################
-##################PROVIDE CHECKBOX FOR KEYWORD AND LANG QUERY#####################
+#DONE ##############MAKE SPECIFIC FIELD OF FORM AS REQUIRED##########################
+#CANCEL ##################PROVIDE CHECKBOX FOR KEYWORD AND LANG QUERY#####################
 ######################EVEN USER AND APP IS DELETED TASK TABLE SHOULD CONTAIN THEIR RECORDS###################
 #################FOR LOOP IS REPEATED IN APP.HTML FOR SAME STATUS OR SAME USER OBJECT REMOVE IT####################
 #################IF TAB HAVE NONE RESULT IT SHOULD SHOW SOME SPECIFIC PAGE#######################
-#################FOR URL IN SEARCHLOCATION.HTML ADD ALSO FOR IPHONE######################
+#DONE #################FOR URL IN SEARCHLOCATION.HTML ADD ALSO FOR IPHONE######################
 ###################SOME TWEETS ARE NOT RETRIEVE WHOLE TEXT MESSAGE########################
 
 #####################BEFORE RETWEETING OR LIKEING ANY TWEETS CHECK IF IT ALREADY LIKE OR NOT######################

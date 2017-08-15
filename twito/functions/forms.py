@@ -7,22 +7,16 @@ from .models import (
 #https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 
 languages = (
-    #('Arabic','Arabic'),
-    #('Bengali', 'Bengali'),
-    #('Bihari Languages', 'Bihari Languages'),
+
     ('',''),
     ('Chinese', 'Chinese'),
     ('English', 'English'),
-    #('German', 'German'),
     ('Gujarati', 'Gujarati'),
     ('Hindi', 'Hindi'),
     ('Japanese', 'Japanese'),
-    #('Malayalam', 'Malayalam'),
     ('Marathi', 'Marathi'),
     ('Russian','Russian'),
     ('Sanskrit','Sanskrit'),
-    #('Tamil','Tamil'),
-    #('Telugu','Telugu'),
 
 )
 
