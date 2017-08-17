@@ -95,7 +95,7 @@ WSGI_APPLICATION = 'twito.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'twitoDB',
+        'NAME': 'twitodb',
         'USER': 'archita1234',
         'PASSWORD': 'rest1234',
         'HOST': 'localhost',
