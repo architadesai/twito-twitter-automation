@@ -41,7 +41,31 @@ class TasksList(models.Model):
     Time = models.DateTimeField(auto_now_add=True, db_index=True)
 
 
-# class UserInfo(models.Model):
+class TaskLike(models.Model):
+
+    user = models.ForeignKey(User, db_index=True, on_delete=models.SET_NULL, null=True)
+    AppName = models.ForeignKey(TwitterApp, db_index=True, on_delete=models.SET_NULL, null=True)
+    tweetID = models.CharField(max_length=30)
+    Time = models.DateTimeField(auto_now_add=True, db_index=True)
+
+
+class TaskFollow(models.Model):
+
+    user = models.ForeignKey(User, db_index=True, on_delete=models.SET_NULL, null=True)
+    AppName = models.ForeignKey(TwitterApp, db_index=True, on_delete=models.SET_NULL, null=True)
+    followUserID = models.CharField(max_length=30)
+    Time = models.DateTimeField(auto_now_add=True, db_index=True)
+
+
+class TaskreTweet(models.Model):
+    user = models.ForeignKey(User, db_index=True, on_delete=models.SET_NULL, null=True)
+    AppName = models.ForeignKey(TwitterApp, db_index=True, on_delete=models.SET_NULL, null=True)
+    tweetID = models.CharField(max_length=30)
+    Time = models.DateTimeField(auto_now_add=True, db_index=True)
+
+
+
+        # class UserInfo(models.Model):
 #
 #     user = models.OneToOneField(User, db_index=True)
 #     TwitterId = models.IntegerField()

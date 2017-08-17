@@ -6,7 +6,18 @@ from django.contrib import messages
 from .models import (
     TwitterApp,
     TasksList,
+    TaskLike,
+    TaskFollow,
+    TaskreTweet,
 
+)
+
+from .tweepyfunc import (
+    getAPI,
+    appendTaskList,
+    followUser,
+    likeTweet,
+    reTweetTweet,
 )
 
 
@@ -46,29 +57,32 @@ def dashboard(request):
             _access_token = request.POST['access_token'].strip()
             _access_key = request.POST['access_key'].strip()
 
-            try:
-                auth = OAuthHandler(_consumerKey, _consumerToken)
-                auth.get_authorization_url()
 
-                auth.set_access_token(_access_token,_access_key)
+                # auth = OAuthHandler(_consumerKey, _consumerToken)
+                # auth.get_authorization_url()
+                #
+                # auth.set_access_token(_access_token,_access_key)
+                #
+                # api = API(auth)
+                # twitterName = (api.me()).name
+                #
+                # # if consumer token and Access Tokens are valid then only would go further
 
-                api = API(auth)
-                twitterName = (api.me()).name
+            api = getAPI(_consumerKey, _consumerToken, _access_token, _access_key)
 
-                # if consumer token and Access Tokens are valid then only would go further
+            if api:
 
                 app = form.save(commit=False)
                 app.user = request.user
                 app.save()
 
-                t = TasksList(user=request.user, AppName=app, TaskName="Application Created")
-                t.save()
+                appendTaskList(request.user, app, "Application Created")
+
 
                 return redirect('/dashboard/')
 
-            except Exception as e:
+            else:
                 # log exception
-                print(str(e))
 
                 messages.warning(
                     request,
@@ -134,12 +148,14 @@ def appPage(request, app_id):
 
         TwitoApp = get_object_or_404(TwitterApp, id=app_id, user=request.user)
 
-        auth = OAuthHandler(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken)
-        auth.get_authorization_url()
+        # auth = OAuthHandler(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken)
+        # auth.get_authorization_url()
+        #
+        # auth.set_access_token(TwitoApp.access_token, TwitoApp.access_key)
+        #
+        # api = API(auth)
 
-        auth.set_access_token(TwitoApp.access_token, TwitoApp.access_key)
-
-        api = API(auth)
+        api = getAPI(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken,TwitoApp.access_token, TwitoApp.access_key)
 
         username = (api.me()).screen_name
 
@@ -157,7 +173,9 @@ def appPage(request, app_id):
 
         #messages = api.direct_messages()
         tasks = TasksList.objects.filter(AppName=TwitoApp)      #returns TaskList objects as Queryset
-
+        likeTasks = TaskLike.objects.filter(AppName=TwitoApp)
+        followTasks = TaskFollow.objects.filter(AppName=TwitoApp)
+        reTweetTasks = TaskreTweet.objects.filter(AppName=TwitoApp)
 
         #request.session['followers_ids'] = followers_ids
         # request.session['friends_sname'] = friends_sname
@@ -167,7 +185,9 @@ def appPage(request, app_id):
 
         return render(request, 'app.html', {'app': TwitoApp, 'followers':followers,
                                                   'friends':friends,'tweets':tweets,'likes':likes,
-                                                  'tasks':tasks})
+                                                  'generalTasks':tasks,
+                                            'likeTasks':likeTasks,'followTasks':followTasks,'reTweetTasks':reTweetTasks
+                                            })
 
 
 
@@ -178,13 +198,15 @@ def appPage(request, app_id):
 def searchLocationwise(request, app_id):
 
     app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
+    #
+    # auth = OAuthHandler(app.ConsumerKey, app.ConsumerToken)
+    # auth.get_authorization_url()
+    #
+    # auth.set_access_token(app.access_token, app.access_key)
+    #
+    # api = API(auth)
 
-    auth = OAuthHandler(app.ConsumerKey, app.ConsumerToken)
-    auth.get_authorization_url()
-
-    auth.set_access_token(app.access_token, app.access_key)
-
-    api = API(auth)
+    api = getAPI(app.ConsumerKey, app.ConsumerToken, app.access_token, app.access_key)
 
     SearchId = {}  # ["userId":"MessageId"]
 
@@ -197,8 +219,8 @@ def searchLocationwise(request, app_id):
 
 
 
-            t = TasksList(user=request.user, AppName=app, TaskName="Search by User")
-            t.save()
+            # t = TasksList(user=request.user, AppName=app, TaskName="Search by User")
+            # t.save()
 
 
             arg_key = request.session.get('keyword')
@@ -257,75 +279,22 @@ def searchLocationwise(request, app_id):
             #
             # print("favorites...",likes_ids)
 
-            for i in SearchId.keys():
-                #print(i)
-                if _like:
-
-                    # if SearchId[i] not in likes_ids:
-                    #
-                    #     print("like", SearchId[i], end=" - ")
-                    #     print((api.create_favorite(SearchId[i])).id_str)  # create_favorite method returns status
-                    #     likes_ids.append(SearchId[i])
-                    #
-                    # else:
-                    #     print("already like", SearchId[i])
-                    # print("favorites...", likes_ids)
-
-                    try:
-                        print("like", SearchId[i], end=" - ")
-                        print((api.create_favorite(SearchId[i])).id_str)  # create_favorite method returns status
-
-                    except Exception as e:
-                        print("Already like")
-                        pass
-
-                if _follow:
-
-                    # if i not in friends_ids:
-                    #     print("follow", i, end=" - ")
-                    #     print(api.create_friendship(i).screen_name)  #follow specific user
-                    #     friends_ids.append(i)
-                    # else:
-                    #     print("already follow", i)
-
-                    if (api.show_friendship(source_screen_name=username, target_id=i))[1].followed_by:
-                        print("Already follow ", i)
-                    else:
-                        print("follow", i, end=" - ")
-                        print(api.create_friendship(i).screen_name)  #follow specific user
-
-                    #it doesn't return error if user is already following to destination user
-                        #and it works same without error whether user is following or not
-                        #so we don't require to change, can remove upper feature
-                    # try:
-                    #     print("follow", i, end=" - ")
-                    #     print(api.create_friendship(i).screen_name)  #follow specific user
-                    # except Exception as e:
-                    #     print("Already follow")
-                    #     pass
-
-
-                if _retweet:
-
-                    try:
-                        print("retweet", end=" - ")
-                        print((api.retweet(SearchId[i])).id)  # retweet specific tweet
-
-                    except Exception as e:
-                        print("Already retweeted")
-                        pass
 
             if _like:
-                t = TasksList(user=request.user, AppName=app, TaskName="Like top 10 tweets")
-                t.save()
+
+                for i in SearchId.values():
+                    likeTweet(request.user, app, api, i)
 
             if _follow:
-                t = TasksList(user=request.user, AppName=app, TaskName="Follow top 10 Users")
-                t.save()
+
+                for i in SearchId.keys():
+                    followUser(request.user, app, api, username, i)
 
             if _retweet:
-                t = TasksList(user=request.user, AppName=app, TaskName="Retweet top 10 tweets")
-                t.save()
+
+                for i in SearchId.values():
+                    reTweetTweet(request.user, app, api, i)
+
 
             #print("Task completed")
             return redirect('/dashboard/'+app_id+'/')
@@ -343,8 +312,10 @@ def deleteTwitterApp(request, app_id):
 
     app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
 
-    t = TasksList(user=request.user, AppName=app, TaskName="Application Deleted")
-    t.save()
+    # t = TasksList(user=request.user, AppName=app, TaskName="Application Deleted")
+    # t.save()
+
+    appendTaskList(request.user, app, "Application Deleted")
 
     app.delete()
 
@@ -366,6 +337,9 @@ def deleteTwitterApp(request, app_id):
 #################IF TAB HAVE NONE RESULT IT SHOULD SHOW SOME SPECIFIC PAGE#######################
 #DONE #################FOR URL IN SEARCHLOCATION.HTML ADD ALSO FOR IPHONE######################
 ###################SOME TWEETS ARE NOT RETRIEVE WHOLE TEXT MESSAGE########################
+# NOTE THAT IF USER MANUALLY DISLIKE OR UNFOLLOW OR UNRETWEET WHICH IS PERFORMED BY
+# TWITO TASK THEN IT WILL NOT DELETE RECORD FROM TASK MODELS#######################################
+
 
 #####################BEFORE RETWEETING  ################
 #DONE ################### LIKEING ANY TWEETS CHECK IF IT ALREADY LIKE OR NOT######################
