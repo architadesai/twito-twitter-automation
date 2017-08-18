@@ -72,7 +72,7 @@ def dashboard(request):
                 app.user = request.user
                 app.save()
 
-                appendTaskList(request.user, app, "Application Created")
+                appendTaskList(request.user, appObj=app, taskName="Application Created")
 
                 return redirect('/dashboard/')
 
@@ -128,7 +128,6 @@ def appPage(request, app_id):
 
                     print("form is valid")
 
-                    print("everythin is in air")
                     return redirect('/dashboard/' + app_id + '/search/')
 
 
@@ -159,7 +158,6 @@ def appPage(request, app_id):
 
                     print("form is valid")
 
-                    print("everythin is in air")
 
                     return redirect('/dashboard/' + app_id + '/search/')
 
@@ -359,7 +357,6 @@ def searchUser(request, app_id):
 
             request.session['userIDs'] = taskIDs
 
-            print("everything is on air")
             return render(request, 'searchUser.html', {'users': searchResult, 'app': app})
 
         except Exception as e:
@@ -381,7 +378,7 @@ def searchUser(request, app_id):
 
                 taskIDs = request.session.get('userIDs')
 
-                print(len(taskIDs))
+                # print(len(taskIDs))
 
                 if _follow:
 

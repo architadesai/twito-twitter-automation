@@ -36,8 +36,8 @@ def searchUsers(api, queryUser, uniqueUser=False, total_search_result = 10, tota
     except Exception as e:
         print(e)
 
-    print(len(ResultObjects))
-    print(len(TaskObjects))
+    # print(len(ResultObjects))
+    # print(len(TaskObjects))
     return ResultObjects, TaskObjects
 
 
@@ -51,7 +51,7 @@ def searchTweets(api, queryKeyword, language, location,
     TaskObjects = {}
 
     print(queryKeyword)
-    print("fdsfdsfs")
+    # print("fdsfdsfs")
 
     try:
         for StatusObject in Cursor(api.search, q=queryKeyword, lang=language, geocode=location).items(total_search_result):
@@ -97,7 +97,7 @@ def getAPI(consumer_key, consumer_token,  access_token, access_key):
 
 def appendTaskList(userObj, appObj, taskName):
 
-    t = TasksList(user=userObj, AppName=appObj, TasksName=taskName)
+    t = TasksList(user=userObj, AppName=appObj, TaskName=taskName)
     t.save()
 
 def appendTaskLike(userObj, appObj, tweetID):
