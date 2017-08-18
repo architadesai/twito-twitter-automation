@@ -1,7 +1,10 @@
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+    #HttpResponseRedirect
 from django.contrib import messages
+
+#from django.core.urlresolvers import reverse
 
 from .models import (
     TwitterApp,
@@ -18,20 +21,24 @@ from .tweepyfunc import (
     followUser,
     likeTweet,
     reTweetTweet,
+    searchTweets,
+    searchUsers,
 )
 
 
 from .forms import (
     TwitterApp_Form,
     SearchLocation_Form,
-    PerformTask_Form
+    PerformTask_Form,
+    SearchUser_Form,
+    SerachKeyword_Form,
 )
 
-from tweepy import(
-    OAuthHandler,
-	API,
-	Cursor,
-)
+# from tweepy import(
+#     OAuthHandler,
+# 	API,
+# 	Cursor,
+# )
 
 
 login_url = '/'
@@ -57,17 +64,6 @@ def dashboard(request):
             _access_token = request.POST['access_token'].strip()
             _access_key = request.POST['access_key'].strip()
 
-
-                # auth = OAuthHandler(_consumerKey, _consumerToken)
-                # auth.get_authorization_url()
-                #
-                # auth.set_access_token(_access_token,_access_key)
-                #
-                # api = API(auth)
-                # twitterName = (api.me()).name
-                #
-                # # if consumer token and Access Tokens are valid then only would go further
-
             api = getAPI(_consumerKey, _consumerToken, _access_token, _access_key)
 
             if api:
@@ -77,7 +73,6 @@ def dashboard(request):
                 app.save()
 
                 appendTaskList(request.user, app, "Application Created")
-
 
                 return redirect('/dashboard/')
 
@@ -107,53 +102,113 @@ def dashboard(request):
 @login_required(login_url=login_url)
 def appPage(request, app_id):
 
-
     if request.method == 'POST':
 
-        form = SearchLocation_Form(request.POST)
+        if 'locationsearch' in request.POST:
+
+            print("searchlocation")
+
+            form = SearchLocation_Form(request.POST)
+
+            if form.is_valid():
+                _keyword = request.POST['keyword'] or None
+                _lang = request.POST['lang'] or None
+                _latitude = request.POST['latitude'] or None
+                _longitude = request.POST['longitude'] or None
+                _radius = request.POST['radius'] or None
+                _radiusUnit = request.POST['radiusUnit'] or None
+
+                try:
+                    request.session['keyword'] = _keyword
+                    request.session['lang'] = _lang
+                    request.session['latitude'] = _latitude
+                    request.session['longitude'] = _longitude
+                    request.session['radius'] = _radius
+                    request.session['radiusUnit'] = _radiusUnit
+
+                    print("form is valid")
+
+                    print("everythin is in air")
+                    return redirect('/dashboard/' + app_id + '/search/')
 
 
-        if form.is_valid():
+                except Exception as e:
 
-            _keyword = request.POST['keyword']
-            _lang = request.POST['lang']
-            _latitude = request.POST['latitude']
-            _longitude = request.POST['longitude']
-            _radius = request.POST['radius']
-            _radiusUnit = request.POST['radiusUnit']
+                    print(e)
+                    return redirect('/dashboard/' + app_id + '/')
 
-            try:
+            else:
+                print(form.errors)
+                return redirect('/dashboard/' + app_id + '/')
 
-                request.session['keyword'] = _keyword
-                request.session['lang'] = _lang
-                request.session['latitude'] = _latitude
-                request.session['longitude'] = _longitude
-                request.session['radius'] = _radius
-                request.session['radiusUnit'] = _radiusUnit
+        if 'keywordsearch' in request.POST:
+
+            print("seachkeyword")
+
+            form = SerachKeyword_Form(request.POST)
+
+            if form.is_valid():
+
+                _keyword = request.POST['keyword'] or None
+                _lang = request.POST['lang'] or None
+
+                try:
+                    request.session['keyword'] = _keyword
+                    request.session['lang'] = _lang
+                    request.session['radiusUnit'] = None
+
+                    print("form is valid")
+
+                    print("everythin is in air")
+
+                    return redirect('/dashboard/' + app_id + '/search/')
 
 
-                return redirect('/dashboard/' + app_id + '/search/')
+                except Exception as e:
+
+                    print(e)
+                    return redirect('/dashboard/' + app_id + '/')
+
+            else:
+                print(form.errors)
+                return redirect('/dashboard/' + app_id + '/')
+
+
+            #return searchTweet(location=True, app_id=app_id, request=request)
+
+            #return redirect(reverse('Search', kwargs={'location':True}))
+
+            #return redirect('Search', kwargs={'location':'True'})
+
+            #return HttpResponseRedirect(reverse('Search', kwargs={'location': 'True'}))
+
+            #return redirect('SearchByLocation', app_id)
 
 
 
-            except Exception as e:
+        if 'usersearch' in request.POST:
 
-                print(e)
-                return redirect('/dashboard/'+app_id+'/')
-        else:
-            print(form.errors)
-            return redirect('/dashboard/'+app_id+'/')
+            print("usersearch")
+
+            form =SearchUser_Form(request.POST)
+
+            if form.is_valid():
+
+                _username = request.POST['username']
+
+                request.session['username'] = _username
+
+                return redirect('/dashboard/' + app_id + '/searchuser/')
+
+            else:
+                print(form.errors)
+                return redirect('/dashboard/' + app_id + '/')
+
 
     else:
 
         TwitoApp = get_object_or_404(TwitterApp, id=app_id, user=request.user)
 
-        # auth = OAuthHandler(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken)
-        # auth.get_authorization_url()
-        #
-        # auth.set_access_token(TwitoApp.access_token, TwitoApp.access_key)
-        #
-        # api = API(auth)
 
         api = getAPI(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken,TwitoApp.access_token, TwitoApp.access_key)
 
@@ -177,11 +232,6 @@ def appPage(request, app_id):
         followTasks = TaskFollow.objects.filter(AppName=TwitoApp)
         reTweetTasks = TaskreTweet.objects.filter(AppName=TwitoApp)
 
-        #request.session['followers_ids'] = followers_ids
-        # request.session['friends_sname'] = friends_sname
-        # request.session['tweets_ids'] = tweets_id
-        # request.session['likes_ids'] = likes_ids
-
 
         return render(request, 'app.html', {'app': TwitoApp, 'followers':followers,
                                                   'friends':friends,'tweets':tweets,'likes':likes,
@@ -195,20 +245,14 @@ def appPage(request, app_id):
 
 
 @login_required(login_url=login_url)
-def searchLocationwise(request, app_id):
+def Search(request, app_id):
+
 
     app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
-    #
-    # auth = OAuthHandler(app.ConsumerKey, app.ConsumerToken)
-    # auth.get_authorization_url()
-    #
-    # auth.set_access_token(app.access_token, app.access_key)
-    #
-    # api = API(auth)
 
     api = getAPI(app.ConsumerKey, app.ConsumerToken, app.access_token, app.access_key)
 
-    SearchId = {}  # ["userId":"MessageId"]
+    #SearchId = {}  # ["userId":"MessageId"]
 
     total_search_result = 10
     perform_task_on_tweets = 10
@@ -217,33 +261,30 @@ def searchLocationwise(request, app_id):
 
         try:
 
-
-
             # t = TasksList(user=request.user, AppName=app, TaskName="Search by User")
             # t.save()
 
+            arg_geo = request.session.get('radiusUnit')
 
             arg_key = request.session.get('keyword')
             arg_lang = request.session.get('lang')
-            arg_geo = str(request.session.get('latitude')) + "," +\
-                  str(request.session.get('longitude')) + "," +\
-                  (str(request.session.get('radius')))+\
-                  (request.session.get('radiusUnit'))
-
-            StatusObjects = []
-
-            for StatusObject in Cursor(api.search,q=arg_key,lang=arg_lang,geocode=arg_geo).items(total_search_result):
-                StatusObjects.append(StatusObject)
-
-                if StatusObject.user.id_str not in SearchId.keys() and len(SearchId.keys()) < perform_task_on_tweets:
-
-                    SearchId[StatusObject.user.id_str] = str(StatusObject.id_str)
 
 
-            request.session['SearchId'] = SearchId
+            #if location search is made then it will pass location query otherwise it will pass none value
+
+            if arg_geo:
+                arg_geo = str(request.session.get('latitude')) + "," +\
+                      str(request.session.get('longitude')) + "," +\
+                      (str(request.session.get('radius')))+\
+                      (request.session.get('radiusUnit'))
 
 
-            return render(request, 'searchlocation.html', {'status': StatusObjects,'app':app})
+            searchResult, taskResult = searchTweets(api, arg_key, arg_lang, arg_geo, True, total_search_result, perform_task_on_tweets)
+
+            request.session['taskIDs'] = taskResult
+
+
+            return render(request, 'search.html', {'status': searchResult,'app':app})
 
         except Exception as e:
 
@@ -256,54 +297,104 @@ def searchLocationwise(request, app_id):
 
             form = PerformTask_Form(request.POST)
 
-            username = api.me().screen_name
+            if form.is_valid():
 
-            _like = request.POST.get('likeTweets', None)
-            _follow = request.POST.get('followUsers', None)
-            _retweet = request.POST.get('retweetTweets', None)
+                username = api.me().screen_name
 
-
-            SearchId = request.session.get('SearchId')
-
-            print("Search ..", SearchId.values())
-
-            # friends_sname = request.session.get('friends_sname')
-            # tweets_ids = request.session.get('tweets_ids')
-            # likes_ids = request.session.get('likes_ids')
-
-            # likes_ids = []
-            # likes = api.favorites(username)
-            #
-            # for i in likes:
-            #     likes_ids.append(i.id_str)
-            #
-            # print("favorites...",likes_ids)
+                _like = request.POST.get('likeTweets', None)
+                _follow = request.POST.get('followUsers', None)
+                _retweet = request.POST.get('retweetTweets', None)
 
 
-            if _like:
+                taskIDs = request.session.get('taskIDs')
 
-                for i in SearchId.values():
-                    likeTweet(request.user, app, api, i)
+                if _like:
 
-            if _follow:
+                    for i in taskIDs.values():
+                        likeTweet(request.user, app, api, i)
 
-                for i in SearchId.keys():
-                    followUser(request.user, app, api, username, i)
+                if _follow:
 
-            if _retweet:
+                    for i in taskIDs.keys():
+                        followUser(request.user, app, api, username, i)
 
-                for i in SearchId.values():
-                    reTweetTweet(request.user, app, api, i)
+                if _retweet:
+
+                    for i in taskIDs.values():
+                        reTweetTweet(request.user, app, api, i)
 
 
-            #print("Task completed")
-            return redirect('/dashboard/'+app_id+'/')
+                #print("Task completed")
+                return redirect('/dashboard/'+app_id+'/')
+
 
         except Exception as e:
 
             print(e)
             return redirect('/dashboard/'+app_id+'/')
 
+
+
+
+@login_required(login_url=login_url)
+def searchUser(request, app_id):
+
+    app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
+
+    api = getAPI(app.ConsumerKey, app.ConsumerToken, app.access_token, app.access_key)
+
+    total_search_result = 10
+    perform_task_on_tweets = 10
+
+    if request.method != 'POST':
+
+        try:
+
+            arg_user = request.session.get('username')
+
+            #here taskIDs will be list of user ids
+            searchResult, taskIDs = searchUsers(api, arg_user, uniqueUser=True,
+                                                    total_search_result=total_search_result,
+                                                    total_task_result=perform_task_on_tweets)
+
+            request.session['userIDs'] = taskIDs
+
+            print("everything is on air")
+            return render(request, 'searchUser.html', {'users': searchResult, 'app': app})
+
+        except Exception as e:
+
+            print(e)
+            return redirect('/dashboard/' + app_id + '/')
+
+    else:
+
+        try:
+
+            form = PerformTask_Form(request.POST)
+
+            if form.is_valid():
+
+                username = api.me().screen_name
+
+                _follow = request.POST.get('followUsers', None)
+
+                taskIDs = request.session.get('userIDs')
+
+                print(len(taskIDs))
+
+                if _follow:
+
+                    for i in taskIDs:
+                        followUser(request.user, app, api, username, i)
+
+
+                return redirect('/dashboard/' + app_id + '/')
+
+        except Exception as e:
+
+            print(e)
+            return redirect('/dashboard/' + app_id + '/')
 
 
 @login_required(login_url=login_url)

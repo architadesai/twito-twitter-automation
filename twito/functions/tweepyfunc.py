@@ -19,6 +19,7 @@ def searchUsers(api, queryUser, uniqueUser=False, total_search_result = 10, tota
     print(queryUser)
 
     try:
+
         for UserObject in Cursor(api.search_users, q=queryUser).items(total_search_result):
 
             ResultObjects.append(UserObject)
@@ -26,7 +27,7 @@ def searchUsers(api, queryUser, uniqueUser=False, total_search_result = 10, tota
             if len(TaskObjects) < total_task_result:
 
                 if uniqueUser:
-                    if UserObject.user.id_str not in TaskObjects:
+                    if UserObject.id_str not in TaskObjects:
                         TaskObjects.append(UserObject.id_str)
                 else:
                     TaskObjects.append(UserObject.id_str)
@@ -35,7 +36,10 @@ def searchUsers(api, queryUser, uniqueUser=False, total_search_result = 10, tota
     except Exception as e:
         print(e)
 
+    print(len(ResultObjects))
+    print(len(TaskObjects))
     return ResultObjects, TaskObjects
+
 
 
 def searchTweets(api, queryKeyword, language, location,
