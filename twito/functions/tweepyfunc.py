@@ -11,6 +11,66 @@ from .models import (
     TaskreTweet
 )
 
+
+def searchUsers(api, queryUser, uniqueUser=False, total_search_result = 10, total_task_result=10):
+
+    ResultObjects = []
+    TaskObjects = []
+    print(queryUser)
+
+    try:
+        for UserObject in Cursor(api.search_users, q=queryUser).items(total_search_result):
+
+            ResultObjects.append(UserObject)
+
+            if len(TaskObjects) < total_task_result:
+
+                if uniqueUser:
+                    if UserObject.user.id_str not in TaskObjects:
+                        TaskObjects.append(UserObject.id_str)
+                else:
+                    TaskObjects.append(UserObject.id_str)
+
+        #print(ResultObjects)
+    except Exception as e:
+        print(e)
+
+    return ResultObjects, TaskObjects
+
+
+def searchTweets(api, queryKeyword, language, location,
+                 uniqueUser=False, total_search_result = 10, total_task_result=10):
+
+
+
+    ResultObjects = []
+    TaskObjects = {}
+
+    print(queryKeyword)
+    print("fdsfdsfs")
+
+    try:
+        for StatusObject in Cursor(api.search, q=queryKeyword, lang=language, geocode=location).items(total_search_result):
+
+            ResultObjects.append(StatusObject)
+
+            if len(TaskObjects.keys()) < total_task_result:
+
+                if uniqueUser:
+                    if StatusObject.user.id_str not in TaskObjects.keys():
+                        TaskObjects[StatusObject.user.id_str] = str(StatusObject.id_str)
+                else:
+                    TaskObjects[StatusObject.user.id_str] = str(StatusObject.id_str)
+
+        # print(ResultObjects)
+
+    except Exception as e:
+        print(e)
+
+    return ResultObjects, TaskObjects
+
+
+
 def getAPI(consumer_key, consumer_token,  access_token, access_key):
 
     try:

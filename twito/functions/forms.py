@@ -40,6 +40,19 @@ class SearchLocation_Form(forms.Form):
         # model = LocationSearch
         # fields = ('latitude','longitude','radius','radiusUnit')
 
+class SerachKeyword_Form(forms.Form):
+
+    class Meta:
+        keyword = forms.CharField(max_length=100, required=True)
+        lang = forms.ChoiceField(choices=languages, label='', initial='', widget=forms.Select(), required=False)
+
+class SearchUser_Form(forms.Form):
+
+    class Meta:
+
+        userName = forms.CharField(max_length=30, required=True)
+
+
 class PerformTask_Form(forms.Form):
 
     class Meta:
