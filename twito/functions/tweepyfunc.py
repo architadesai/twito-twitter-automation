@@ -50,7 +50,8 @@ def searchTweets(api, queryKeyword, language, location,
     ResultObjects = []
     TaskObjects = {}
 
-    print(queryKeyword)
+    print("keyword ",queryKeyword)
+    print("location ",location)
     # print("fdsfdsfs")
 
     try:
