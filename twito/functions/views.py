@@ -210,35 +210,43 @@ def appPage(request, app_id):
 
         api = getAPI(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken,TwitoApp.access_token, TwitoApp.access_key)
 
-        username = (api.me()).screen_name
+        if api:
 
-######objects to pass to html
-        #to get all followers or friends use cursor
-        #trends = api.trends_available()
-        followers = api.followers(username)  #returns user object
-        #followers_ids = api.followers_ids(username)
-        friends = api.friends(username)      #returns user object
+            username = api.me().screen_name
 
-        tweets = api.user_timeline()             #returns status object
+    ######objects to pass to html
+            #to get all followers or friends use cursor
+            #trends = api.trends_available()
+            followers = api.followers(username)  #returns user object
+            #followers_ids = api.followers_ids(username)
+            friends = api.friends(username)      #returns user object
 
-        #lists =
-        likes = api.favorites(username)          #returns status object
+            tweets = api.user_timeline()             #returns status object
 
-        #messages = api.direct_messages()
-        tasks = TasksList.objects.filter(AppName=TwitoApp)      #returns TaskList objects as Queryset
-        likeTasks = TaskLike.objects.filter(AppName=TwitoApp)
-        followTasks = TaskFollow.objects.filter(AppName=TwitoApp)
-        reTweetTasks = TaskreTweet.objects.filter(AppName=TwitoApp)
+            #lists =
+            likes = api.favorites(username)          #returns status object
 
-
-        return render(request, 'app.html', {'app': TwitoApp, 'followers':followers,
-                                                  'friends':friends,'tweets':tweets,'likes':likes,
-                                                  'generalTasks':tasks,
-                                            'likeTasks':likeTasks,'followTasks':followTasks,'reTweetTasks':reTweetTasks
-                                            })
+            #messages = api.direct_messages()
+            tasks = TasksList.objects.filter(AppName=TwitoApp)      #returns TaskList objects as Queryset
+            likeTasks = TaskLike.objects.filter(AppName=TwitoApp)
+            followTasks = TaskFollow.objects.filter(AppName=TwitoApp)
+            reTweetTasks = TaskreTweet.objects.filter(AppName=TwitoApp)
 
 
+            return render(request, 'app.html', {'app': TwitoApp, 'followers':followers,
+                                                      'friends':friends,'tweets':tweets,'likes':likes,
+                                                      'generalTasks':tasks,
+                                                'likeTasks':likeTasks,'followTasks':followTasks,'reTweetTasks':reTweetTasks
+                                                })
 
+
+        else:
+            messages.warning(
+                request,
+                '''Error in Consumer Key/Token!
+                Please try again with correct Twitter App Credentials!''')
+
+            return redirect('/dashboard/')
 
 
 
