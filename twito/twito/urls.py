@@ -18,6 +18,13 @@ urlpatterns = [
     url(r'^dashboard/(?P<app_id>[\w]+)/$',
         views.appPage, name='twitterApp'),
 
+    url(r'^dashboard/connect/(?P<app_id>[\w]+)/$',
+        views.appConnect, name='ConnectTwitter'),
+
+
+    url(r'^dashboard/connect/(?P<app_id>[\w]+)/callback/$',
+        views.appCallback, name='CallbackView'),
+
     url(r'^dashboard/(?P<app_id>[\w]+)/delete/$',
         views.deleteTwitterApp, name='twitterApp'),
 

@@ -8,7 +8,9 @@ from .models import (
     TasksList,
     TaskLike,
     TaskFollow,
-    TaskreTweet
+    TaskreTweet,
+    TwitterApp,
+    AppAccess,
 )
 
 
@@ -75,14 +77,19 @@ def searchTweets(api, queryKeyword, language, location,
     return ResultObjects, TaskObjects
 
 
-
-def getAPI(consumer_key, consumer_token,  access_token, access_key):
+def getAPI(consumer_key, consumer_token, access_key, access_token):
 
     try:
-        auth = OAuthHandler(consumer_key, consumer_token)
-        auth.get_authorization_url()
 
-        auth.set_access_token(access_token, access_key)
+        auth = OAuthHandler(consumer_key, consumer_token)
+
+        auth.set_access_token(access_key, access_token)
+
+        # print("Tokens are...")
+        # print(consumer_key)
+        # print(consumer_token)
+        # print(access_token)
+        # print(access_key)
 
         api = API(auth)
         twitterName = (api.me()).name
@@ -96,29 +103,32 @@ def getAPI(consumer_key, consumer_token,  access_token, access_key):
         return False
 
 
-def appendTaskList(userObj, appObj, taskName):
+def appendTaskList(userObj, appObj, taskName, Obj=False):
 
     t = TasksList(user=userObj, AppName=appObj, TaskName=taskName)
     t.save()
+    if Obj:
+        return t
 
-def appendTaskLike(userObj, appObj, tweetID):
 
-    t = TaskLike(user=userObj, AppName=appObj, tweetID=tweetID)
+def appendTaskLike(userObj, appObj, tweetID, taskObj):
+
+    t = TaskLike(user=userObj, AppName=appObj, tweetID=tweetID, TaskName=taskObj)
     t.save()
 
-def appendTaskFollow(userObj, appObj, followUserID):
+def appendTaskFollow(userObj, appObj, followUserID, taskObj):
 
-    t = TaskFollow(user=userObj, AppName=appObj, followUserID=followUserID)
+    t = TaskFollow(user=userObj, AppName=appObj, followUserID=followUserID, TaskName=taskObj)
     t.save()
 
-def appendTaskreTweet(userObj, appObj, tweetID):
+def appendTaskreTweet(userObj, appObj, tweetID, taskObj):
 
-    t = TaskreTweet(user=userObj, AppName=appObj, tweetID=tweetID)
+    t = TaskreTweet(user=userObj, AppName=appObj, tweetID=tweetID, TaskName=taskObj)
     t.save()
 
 
 
-def likeTweet(userObj, appObj, api, tweetID):
+def likeTweet(userObj, appObj, api, tweetID, taskObj):
 
     #tweet id of tweet which should be like by user which is connected to api
     #         # if SearchId[i] not in likes_ids:
@@ -135,7 +145,7 @@ def likeTweet(userObj, appObj, api, tweetID):
     try:
         print("like", tweetID, end=" - ")
         print((api.create_favorite(tweetID).id_str))   # create_favorite method returns status
-        appendTaskLike(userObj, appObj, tweetID)
+        appendTaskLike(userObj, appObj, tweetID, taskObj)
 
     except Exception as e:
 
@@ -144,7 +154,7 @@ def likeTweet(userObj, appObj, api, tweetID):
 
 
 
-def followUser(userObj, appObj, api, userSName, toFollowUserID):
+def followUser(userObj, appObj, api, userSName, toFollowUserID, taskObj):
 
     #userSName is user screen_name
     #toFollowUsers is id of all user which should be followed by userSName
@@ -182,10 +192,10 @@ def followUser(userObj, appObj, api, userSName, toFollowUserID):
     else:
         print("follow", toFollowUserID, end=" - ")
         print(api.create_friendship(toFollowUserID).screen_name)  # follow specific user
-        appendTaskFollow(userObj, appObj, toFollowUserID)
+        appendTaskFollow(userObj, appObj, toFollowUserID, taskObj)
 
 
-def reTweetTweet(userObj, appObj, api, tweetID):
+def reTweetTweet(userObj, appObj, api, tweetID, taskObj):
 
     # tweet id of tweet which should be retweet by user which is connected to api
 
@@ -193,7 +203,7 @@ def reTweetTweet(userObj, appObj, api, tweetID):
     try:
         print("retweet", end=" - ")
         print((api.retweet(tweetID)).id_str)  # retweet specific tweet
-        appendTaskreTweet(userObj, appObj, tweetID)
+        appendTaskreTweet(userObj, appObj, tweetID, taskObj)
 
     except Exception as e:
 

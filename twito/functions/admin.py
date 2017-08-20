@@ -9,9 +9,11 @@ from .models import (
     TaskreTweet,
     TaskFollow,
     TaskLike,
+    AppAccess,
 )
 
 
+admin.site.register(AppAccess)
 admin.site.register(TwitterApp)
 admin.site.register(TasksList)
 admin.site.register(TaskLike)

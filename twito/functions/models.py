@@ -13,11 +13,18 @@ class TwitterApp(RandomPrimaryId):
     AppName = models.TextField(max_length=50)
     ConsumerKey = models.TextField(max_length=100)
     ConsumerToken = models.TextField(max_length=100)
-    access_token = models.TextField(max_length=100, default="Not Assigned")
-    access_key = models.TextField(max_length=100, default="Not Assigned")
 
     def get_absolute_url(self):
         return "/dashboard/%s/" % self.id
+
+class AppAccess(models.Model):
+
+    user = models.ForeignKey(User, db_index=True)
+    AppName = models.ForeignKey(TwitterApp, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    access_token = models.TextField(max_length=100)
+    access_key = models.TextField(max_length=100)
+
 
 # class LocationSearch(models.Model):
 #
@@ -35,31 +42,37 @@ class TwitterApp(RandomPrimaryId):
 
 class TasksList(models.Model):
 
-    user = models.ForeignKey(User, db_index=True, on_delete=models.SET_NULL, null=True)
-    AppName = models.ForeignKey(TwitterApp, db_index=True, on_delete=models.SET_NULL, null=True)
+
+    #user = models.ForeignKey(User, db_index=True, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(User, db_index=True)
+    AppName = models.ForeignKey(TwitterApp, db_index=True)
     TaskName = models.CharField(max_length=200)
     Time = models.DateTimeField(auto_now_add=True, db_index=True)
 
 
 class TaskLike(models.Model):
 
-    user = models.ForeignKey(User, db_index=True, on_delete=models.SET_NULL, null=True)
-    AppName = models.ForeignKey(TwitterApp, db_index=True, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(User, db_index=True)
+    TaskName = models.ForeignKey(TasksList, db_index=True)
+    AppName = models.ForeignKey(TwitterApp, db_index=True)
     tweetID = models.CharField(max_length=30)
     Time = models.DateTimeField(auto_now_add=True, db_index=True)
 
 
 class TaskFollow(models.Model):
 
-    user = models.ForeignKey(User, db_index=True, on_delete=models.SET_NULL, null=True)
-    AppName = models.ForeignKey(TwitterApp, db_index=True, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(User, db_index=True)
+    TaskName = models.ForeignKey(TasksList, db_index=True, null=True)
+    AppName = models.ForeignKey(TwitterApp, db_index=True)
     followUserID = models.CharField(max_length=30)
     Time = models.DateTimeField(auto_now_add=True, db_index=True)
 
 
 class TaskreTweet(models.Model):
-    user = models.ForeignKey(User, db_index=True, on_delete=models.SET_NULL, null=True)
-    AppName = models.ForeignKey(TwitterApp, db_index=True, on_delete=models.SET_NULL, null=True)
+
+    user = models.ForeignKey(User, db_index=True)
+    TaskName = models.ForeignKey(TasksList, db_index=True)
+    AppName = models.ForeignKey(TwitterApp, db_index=True)
     tweetID = models.CharField(max_length=30)
     Time = models.DateTimeField(auto_now_add=True, db_index=True)
 

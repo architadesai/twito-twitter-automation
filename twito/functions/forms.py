@@ -24,7 +24,7 @@ languages = (
 class TwitterApp_Form(forms.ModelForm):
     class Meta:
         model = TwitterApp
-        fields = ('AppName', 'ConsumerKey', 'ConsumerToken','access_token','access_key')
+        fields = ('AppName', 'ConsumerKey', 'ConsumerToken')
 
 
 class SearchLocation_Form(forms.Form):
