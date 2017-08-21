@@ -148,7 +148,7 @@ def appConnect(request, app_id):
 
         auth = tweepy.OAuthHandler(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken)
 
-        callbackURL = 'http://127.0.0.1:8000/dashboard/connect/' + str(app_id) + '/callback/'
+        callbackURL = 'http://45.76.44.38:8000/dashboard/connect/' + str(app_id) + '/callback/'
 
         # print("in auth")
 
