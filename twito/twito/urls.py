@@ -35,7 +35,7 @@ urlpatterns = [
     #     views.Search, kwargs={'location':False}, name='SearchByKeyword'),
 
     url(r'^dashboard/(?P<app_id>[\w]+)/search/$',
-        views.Search, name='Search'),
+        views.searchTweet, name='searchTweets'),
 
 
     url(r'^dashboard/(?P<app_id>[\w]+)/searchuser/$',

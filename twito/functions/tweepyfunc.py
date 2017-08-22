@@ -14,7 +14,7 @@ from .models import (
 )
 
 
-def searchUsers(api, queryUser, uniqueUser=False, total_search_result = 10, total_task_result=10):
+def searchUsers(api, queryUser, uniqueUser=False, totalSearchResult = 10, totalTaskResult=10):
 
     ResultObjects = []
     TaskObjects = []
@@ -22,11 +22,11 @@ def searchUsers(api, queryUser, uniqueUser=False, total_search_result = 10, tota
 
     try:
 
-        for UserObject in Cursor(api.search_users, q=queryUser).items(total_search_result):
+        for UserObject in Cursor(api.search_users, q=queryUser).items(totalSearchResult):
 
             ResultObjects.append(UserObject)
 
-            if len(TaskObjects) < total_task_result:
+            if len(TaskObjects) < totalTaskResult:
 
                 if uniqueUser:
                     if UserObject.id_str not in TaskObjects:
@@ -45,7 +45,7 @@ def searchUsers(api, queryUser, uniqueUser=False, total_search_result = 10, tota
 
 
 def searchTweets(api, queryKeyword, language, location,
-                 uniqueUser=False, total_search_result = 10, total_task_result=10):
+                 uniqueUser=False, totalSearchResult = 10, totalTaskResult=10):
 
 
 
@@ -57,11 +57,11 @@ def searchTweets(api, queryKeyword, language, location,
     # print("fdsfdsfs")
 
     try:
-        for StatusObject in Cursor(api.search, q=queryKeyword, lang=language, geocode=location).items(total_search_result):
+        for StatusObject in Cursor(api.search, q=queryKeyword, lang=language, geocode=location).items(totalSearchResult):
 
             ResultObjects.append(StatusObject)
 
-            if len(TaskObjects.keys()) < total_task_result:
+            if len(TaskObjects.keys()) < totalTaskResult:
 
                 if uniqueUser:
                     if StatusObject.user.id_str not in TaskObjects.keys():
@@ -77,13 +77,13 @@ def searchTweets(api, queryKeyword, language, location,
     return ResultObjects, TaskObjects
 
 
-def getAPI(consumer_key, consumer_token, access_key, access_token):
+def getAPI(consumerKey, consumerToken, accessKey, accessToken):
 
     try:
 
-        auth = OAuthHandler(consumer_key, consumer_token)
+        auth = OAuthHandler(consumerKey, consumerToken)
 
-        auth.set_access_token(access_key, access_token)
+        auth.set_access_token(accessKey, accessToken)
 
         # print("Tokens are...")
         # print(consumer_key)
@@ -105,7 +105,7 @@ def getAPI(consumer_key, consumer_token, access_key, access_token):
 
 def appendTaskList(userObj, appObj, taskName, Obj=False):
 
-    t = TasksList(user=userObj, AppName=appObj, TaskName=taskName)
+    t = TasksList(user=userObj, appName=appObj, taskName=taskName)
     t.save()
     if Obj:
         return t
@@ -113,17 +113,17 @@ def appendTaskList(userObj, appObj, taskName, Obj=False):
 
 def appendTaskLike(userObj, appObj, tweetID, taskObj):
 
-    t = TaskLike(user=userObj, AppName=appObj, tweetID=tweetID, TaskName=taskObj)
+    t = TaskLike(user=userObj, appName=appObj, tweetID=tweetID, taskName=taskObj)
     t.save()
 
 def appendTaskFollow(userObj, appObj, followUserID, taskObj):
 
-    t = TaskFollow(user=userObj, AppName=appObj, followUserID=followUserID, TaskName=taskObj)
+    t = TaskFollow(user=userObj, appName=appObj, followUserID=followUserID, taskName=taskObj)
     t.save()
 
 def appendTaskreTweet(userObj, appObj, tweetID, taskObj):
 
-    t = TaskreTweet(user=userObj, AppName=appObj, tweetID=tweetID, TaskName=taskObj)
+    t = TaskreTweet(user=userObj, appName=appObj, tweetID=tweetID, taskName=taskObj)
     t.save()
 
 

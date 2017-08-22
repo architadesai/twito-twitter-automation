@@ -27,11 +27,11 @@ from .tweepyfunc import (
 
 
 from .forms import (
-    TwitterApp_Form,
-    SearchLocation_Form,
-    PerformTask_Form,
-    SearchUser_Form,
-    SerachKeyword_Form,
+    TwitterAppForm,
+    SearchLocationForm,
+    PerformTaskForm,
+    SearchUserForm,
+    SerachKeywordForm,
 )
 
 import tweepy
@@ -49,7 +49,7 @@ def appCallback(request, app_id):
 
     app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
 
-    auth = tweepy.OAuthHandler(app.ConsumerKey, app.ConsumerToken)
+    auth = tweepy.OAuthHandler(app.consumerKey, app.consumerToken)
 
     oauth_token = request.GET.get('oauth_token', '')
     oauth_verifier = request.GET.get('oauth_verifier', '')
@@ -59,11 +59,11 @@ def appCallback(request, app_id):
 
     try:
         auth.get_access_token(verifier=oauth_verifier)
-        appAcc = AppAccess(user=request.user, AppName=app)
-        appAcc.access_key = auth.access_token_secret
-        appAcc.access_token = auth.access_token
+        appAcc = AppAccess(user=request.user, appName=app)
+        appAcc.accessKey = auth.access_token_secret
+        appAcc.accessToken = auth.access_token
         appAcc.save()
-        # print("access key:",appAcc.access_key," access token:",appAcc.access_token)
+        # print("access key:",appAcc.accessKey," access token:",appAcc.access_token)
 
         return redirect('/dashboard/')
 
@@ -81,16 +81,16 @@ def dashboard(request):
 
     if request.method == 'POST':
 
-        form = TwitterApp_Form(request.POST)
+        form = TwitterAppForm(request.POST)
 
         # log form details here
 
         if form.is_valid():
 
-            _consumerKey = request.POST['ConsumerKey'].strip()
-            _consumerToken = request.POST['ConsumerToken'].strip()
+            _consumerKey = request.POST['consumerKey'].strip()
+            _consumerToken = request.POST['consumerToken'].strip()
             # _access_token = request.POST['access_token'].strip()
-            # _access_key = request.POST['access_key'].strip()
+            # _accessKey = request.POST['accessKey'].strip()
 
             try:
                 # callback_url = 'http://127.0.0.1:8000/dashboard/callback'
@@ -130,10 +130,10 @@ def dashboard(request):
 
     else:
 
-        form = TwitterApp_Form()
+        form = TwitterAppForm()
 
         apps = TwitterApp.objects.filter(
-            user=request.user).order_by('-created_at')
+            user=request.user).order_by('-createdAt')
 
         return render(request, 'dashboard.html', {'apps': apps, 'form': form})
 
@@ -142,17 +142,17 @@ def dashboard(request):
 def appConnect(request, app_id):
 
     print("Connecting........")
-    TwitoApp = get_object_or_404(TwitterApp, id=app_id, user=request.user)
+    twitoApp = get_object_or_404(TwitterApp, id=app_id, user=request.user)
 
     try:
 
-        auth = tweepy.OAuthHandler(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken)
+        auth = tweepy.OAuthHandler(twitoApp.consumerKey, twitoApp.consumerToken)
 
-        callbackURL = 'http://45.76.44.38:8000/dashboard/connect/' + str(app_id) + '/callback/'
+        callbackURL = 'http://127.0.0.1:8000/dashboard/connect/' + str(app_id) + '/callback/'
 
         # print("in auth")
 
-        auth = tweepy.OAuthHandler(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken, callbackURL)
+        auth = tweepy.OAuthHandler(twitoApp.consumerKey, twitoApp.consumerToken, callbackURL)
 
         return redirect(auth.get_authorization_url())
 
@@ -175,7 +175,7 @@ def appPage(request, app_id):
 
             print("searchlocation")
 
-            form = SearchLocation_Form(request.POST)
+            form = SearchLocationForm(request.POST)
 
             if form.is_valid():
                 _keyword = request.POST['keyword'] or None
@@ -211,7 +211,7 @@ def appPage(request, app_id):
 
             print("seachkeyword")
 
-            form = SerachKeyword_Form(request.POST)
+            form = SerachKeywordForm(request.POST)
 
             if form.is_valid():
 
@@ -255,7 +255,7 @@ def appPage(request, app_id):
 
             print("usersearch")
 
-            form =SearchUser_Form(request.POST)
+            form =SearchUserForm(request.POST)
 
             if form.is_valid():
 
@@ -272,14 +272,14 @@ def appPage(request, app_id):
 
     else:
 
-        TwitoApp = get_object_or_404(TwitterApp, id=app_id, user=request.user)
+        twitoApp = get_object_or_404(TwitterApp, id=app_id, user=request.user)
 
         try:
 
-            appAcc = get_object_or_404(AppAccess, user=request.user, AppName=TwitoApp)
+            appAcc = get_object_or_404(AppAccess, user=request.user, appName=twitoApp)
 
             print("direct to function..")
-            api = getAPI(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken, appAcc.access_token, appAcc.access_key)
+            api = getAPI(twitoApp.consumerKey, twitoApp.consumerToken, appAcc.accessToken, appAcc.accessKey)
 
             if api:
                 username = (api.me()).screen_name
@@ -298,13 +298,13 @@ def appPage(request, app_id):
                 likes = api.favorites(username)          #returns status object
 
                 #messages = api.direct_messages()
-                tasks = TasksList.objects.filter(AppName=TwitoApp)      #returns TaskList objects as Queryset
-                likeTasks = TaskLike.objects.filter(AppName=TwitoApp)
-                followTasks = TaskFollow.objects.filter(AppName=TwitoApp)
-                reTweetTasks = TaskreTweet.objects.filter(AppName=TwitoApp)
+                tasks = TasksList.objects.filter(appName=twitoApp)      #returns TaskList objects as Queryset
+                likeTasks = TaskLike.objects.filter(appName=twitoApp)
+                followTasks = TaskFollow.objects.filter(appName=twitoApp)
+                reTweetTasks = TaskreTweet.objects.filter(appName=twitoApp)
 
 
-                return render(request, 'app.html', {'app': TwitoApp, 'followers':followers,
+                return render(request, 'app.html', {'app': twitoApp, 'followers':followers,
                                                           'friends':friends,'tweets':tweets,'likes':likes,
                                                           'generalTasks':tasks,
                                                     'likeTasks':likeTasks,'followTasks':followTasks,'reTweetTasks':reTweetTasks
@@ -326,24 +326,24 @@ def appPage(request, app_id):
 
 
 @login_required(login_url=login_url)
-def Search(request, app_id):
+def searchTweet(request, app_id):
 
     print("search.................")
-    TwitoApp = get_object_or_404(TwitterApp, id=app_id, user=request.user)
-    appAcc = get_object_or_404(AppAccess, user=request.user, AppName=TwitoApp)
+    twitoApp = get_object_or_404(TwitterApp, id=app_id, user=request.user)
+    appAcc = get_object_or_404(AppAccess, user=request.user, appName=twitoApp)
 
-    api = getAPI(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken, appAcc.access_token, appAcc.access_key)
+    api = getAPI(twitoApp.consumerKey, twitoApp.consumerToken, appAcc.accessToken, appAcc.accessKey)
 
     #SearchId = {}  # ["userId":"MessageId"]
 
-    total_search_result = 10
-    perform_task_on_tweets = 10
+    totalSearchResult = 10
+    performTaskOnTweets = 10
 
     if request.method != 'POST':
 
         try:
 
-            # t = TasksList(user=request.user, AppName=app, TaskName="Search by User")
+            # t = TasksList(user=request.user, appName=app, TaskName="Search by User")
             # t.save()
 
             arg_geo = request.session.get('radiusUnit')
@@ -361,12 +361,12 @@ def Search(request, app_id):
                       (request.session.get('radiusUnit'))
 
 
-            searchResult, taskResult = searchTweets(api, arg_key, arg_lang, arg_geo, True, total_search_result, perform_task_on_tweets)
+            searchResult, taskResult = searchTweets(api, arg_key, arg_lang, arg_geo, True, totalSearchResult, performTaskOnTweets)
 
             request.session['taskIDs'] = taskResult
 
 
-            return render(request, 'search.html', {'status': searchResult,'app':TwitoApp})
+            return render(request, 'search.html', {'status': searchResult,'app':twitoApp})
 
         except Exception as e:
 
@@ -377,7 +377,7 @@ def Search(request, app_id):
 
         try:
 
-            form = PerformTask_Form(request.POST)
+            form = PerformTaskForm(request.POST)
 
             if form.is_valid():
 
@@ -392,22 +392,22 @@ def Search(request, app_id):
 
                 if _like:
 
-                    taskObj = appendTaskList(request.user, TwitoApp, "Like "+str(perform_task_on_tweets)+" Tweets", True)
+                    taskObj = appendTaskList(request.user, twitoApp, "Like "+str(performTaskOnTweets)+" Tweets", True)
                     for i in taskIDs.values():
-                        likeTweet(request.user, TwitoApp, api, i, taskObj)
+                        likeTweet(request.user, twitoApp, api, i, taskObj)
 
                 if _follow:
 
-                    taskObj = appendTaskList(request.user, TwitoApp, "Follow " + str(perform_task_on_tweets)+" Users", True)
+                    taskObj = appendTaskList(request.user, twitoApp, "Follow " + str(performTaskOnTweets)+" Users", True)
                     for i in taskIDs.keys():
-                        followUser(request.user, TwitoApp, api, username, i, taskObj)
+                        followUser(request.user, twitoApp, api, username, i, taskObj)
 
                 if _retweet:
 
 
-                    taskObj = appendTaskList(request.user, TwitoApp, "Retweet " + str(perform_task_on_tweets)+" Tweets", True)
+                    taskObj = appendTaskList(request.user, twitoApp, "Retweet " + str(performTaskOnTweets)+" Tweets", True)
                     for i in taskIDs.values():
-                        reTweetTweet(request.user, TwitoApp, api, i, taskObj)
+                        reTweetTweet(request.user, twitoApp, api, i, taskObj)
 
 
                 #print("Task completed")
@@ -425,13 +425,13 @@ def Search(request, app_id):
 @login_required(login_url=login_url)
 def searchUser(request, app_id):
 
-    TwitoApp = get_object_or_404(TwitterApp, id=app_id, user=request.user)
-    appAcc = get_object_or_404(AppAccess, user=request.user, AppName=TwitoApp)
+    twitoApp = get_object_or_404(TwitterApp, id=app_id, user=request.user)
+    appAcc = get_object_or_404(AppAccess, user=request.user, appName=twitoApp)
 
-    api = getAPI(TwitoApp.ConsumerKey, TwitoApp.ConsumerToken, appAcc.access_token, appAcc.access_key)
+    api = getAPI(twitoApp.consumerKey, twitoApp.consumerToken, appAcc.accessToken, appAcc.accessKey)
 
-    total_search_result = 10
-    perform_task_on_tweets = 10
+    totalSearchResult = 10
+    performTaskOnTweets = 10
 
     if request.method != 'POST':
 
@@ -441,12 +441,12 @@ def searchUser(request, app_id):
 
             #here taskIDs will be list of user ids
             searchResult, taskIDs = searchUsers(api, arg_user, uniqueUser=True,
-                                                    total_search_result=total_search_result,
-                                                    total_task_result=perform_task_on_tweets)
+                                                    totalSearchResult=totalSearchResult,
+                                                    totalTaskResult=performTaskOnTweets)
 
             request.session['userIDs'] = taskIDs
 
-            return render(request, 'searchUser.html', {'users': searchResult, 'app': TwitoApp})
+            return render(request, 'searchUser.html', {'users': searchResult, 'app': twitoApp})
 
         except Exception as e:
 
@@ -457,7 +457,7 @@ def searchUser(request, app_id):
 
         try:
 
-            form = PerformTask_Form(request.POST)
+            form = PerformTaskForm(request.POST)
 
             if form.is_valid():
 
@@ -471,9 +471,9 @@ def searchUser(request, app_id):
 
                 if _follow:
 
-                    taskObj = appendTaskList(request.user, TwitoApp, "Follow " + str(perform_task_on_tweets) + " Users", True)
+                    taskObj = appendTaskList(request.user, twitoApp, "Follow " + str(performTaskOnTweets) + " Users", True)
                     for i in taskIDs:
-                        followUser(request.user, TwitoApp, api, username, i, taskObj)
+                        followUser(request.user, twitoApp, api, username, i, taskObj)
 
 
                 return redirect('/dashboard/' + app_id + '/')
@@ -490,7 +490,7 @@ def deleteTwitterApp(request, app_id):
 
     app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
 
-    # t = TasksList(user=request.user, AppName=app, TaskName="Application Deleted")
+    # t = TasksList(user=request.user, appName=app, TaskName="Application Deleted")
     # t.save()
 
     appendTaskList(request.user, app, "Application Deleted")

@@ -21,13 +21,13 @@ languages = (
 )
 
 
-class TwitterApp_Form(forms.ModelForm):
+class TwitterAppForm(forms.ModelForm):
     class Meta:
         model = TwitterApp
-        fields = ('AppName', 'ConsumerKey', 'ConsumerToken')
+        fields = ('appName', 'consumerKey', 'consumerToken')
 
 
-class SearchLocation_Form(forms.Form):
+class SearchLocationForm(forms.Form):
     class Meta:
 
         keyword = forms.CharField(max_length=100, required=False)
@@ -40,20 +40,20 @@ class SearchLocation_Form(forms.Form):
         # model = LocationSearch
         # fields = ('latitude','longitude','radius','radiusUnit')
 
-class SerachKeyword_Form(forms.Form):
+class SerachKeywordForm(forms.Form):
 
     class Meta:
         keyword = forms.CharField(max_length=100, required=True)
         lang = forms.ChoiceField(choices=languages, label='', initial='', widget=forms.Select(), required=False)
 
-class SearchUser_Form(forms.Form):
+class SearchUserForm(forms.Form):
 
     class Meta:
 
         userName = forms.CharField(max_length=30, required=True)
 
 
-class PerformTask_Form(forms.Form):
+class PerformTaskForm(forms.Form):
 
     class Meta:
 
