@@ -14,8 +14,16 @@ class TwitterApp(RandomPrimaryId):
     consumerKey = models.TextField(max_length=100)
     consumerToken = models.TextField(max_length=100)
 
-    def get_absolute_url(self):
-        return "/dashboard/%s/" % self.id
+    # def get_absolute_url(self):
+    #     return "/dashboard/%s/" % self.id
+
+    def __str__(self):
+        return self.appName
+
+
+    # def __unicode__(self):
+    #     return self.appName
+
 
 class AppAccess(models.Model):
 
@@ -43,7 +51,6 @@ class AppAccess(models.Model):
 class TasksList(models.Model):
 
 
-    #user = models.ForeignKey(User, db_index=True, on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(User, db_index=True)
     appName = models.ForeignKey(TwitterApp, db_index=True)
     taskName = models.CharField(max_length=200)
