@@ -18,7 +18,8 @@ def searchUsers(api, queryUser, uniqueUser=False, totalSearchResult = 10, totalT
 
     ResultObjects = []
     TaskObjects = []
-    print(queryUser)
+
+    print("query = ",queryUser)
 
     try:
 
@@ -34,12 +35,9 @@ def searchUsers(api, queryUser, uniqueUser=False, totalSearchResult = 10, totalT
                 else:
                     TaskObjects.append(UserObject.id_str)
 
-        #print(ResultObjects)
     except Exception as e:
         print(e)
 
-    # print(len(ResultObjects))
-    # print(len(TaskObjects))
     return ResultObjects, TaskObjects
 
 
@@ -52,9 +50,8 @@ def searchTweets(api, queryKeyword, language, location,
     ResultObjects = []
     TaskObjects = {}
 
-    print("keyword ",queryKeyword)
-    print("location ",location)
-    # print("fdsfdsfs")
+    print("keyword = ",queryKeyword)
+    print("location = ",location)
 
     try:
         for StatusObject in Cursor(api.search, q=queryKeyword, lang=language, geocode=location).items(totalSearchResult):
@@ -84,12 +81,6 @@ def getAPI(consumerKey, consumerToken, accessKey, accessToken):
         auth = OAuthHandler(consumerKey, consumerToken)
 
         auth.set_access_token(accessKey, accessToken)
-
-        # print("Tokens are...")
-        # print(consumer_key)
-        # print(consumer_token)
-        # print(access_token)
-        # print(access_key)
 
         api = API(auth)
         twitterName = (api.me()).name

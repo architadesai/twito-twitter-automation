@@ -14,15 +14,9 @@ class TwitterApp(RandomPrimaryId):
     consumerKey = models.TextField(max_length=100)
     consumerToken = models.TextField(max_length=100)
 
-    # def get_absolute_url(self):
-    #     return "/dashboard/%s/" % self.id
 
     def __str__(self):
         return self.appName
-
-
-    # def __unicode__(self):
-    #     return self.appName
 
 
 class AppAccess(models.Model):
@@ -32,19 +26,6 @@ class AppAccess(models.Model):
     createdAt = models.DateTimeField(auto_now_add=True, db_index=True)
     accessToken = models.TextField(max_length=100)
     accessKey = models.TextField(max_length=100)
-
-
-# class LocationSearch(models.Model):
-#
-#     user = models.ForeignKey(User, db_index=True)
-#     AppName = models.ForeignKey(TwitterApp)
-#     latitude = models.FloatField()
-#     longitude = models.FloatField()
-#     radius = models.FloatField()
-#     radiusUnit = models.CharField(max_length=2, default='km', choices=(('km','km'),('mi','mi')))
-#     SearchTime = models.DateTimeField(auto_now=True)
-
-#def get_user():
 
 
 
@@ -88,15 +69,3 @@ class TaskreTweet(models.Model):
 
 
 
-        # class UserInfo(models.Model):
-#
-#     user = models.OneToOneField(User, db_index=True)
-#     TwitterId = models.IntegerField()
-#     UserName = models.CharField(max_length=100)
-#     ScreenName = models.CharField(max_length=150)
-#     friends =
-#     followers =
-#     TwitterProfile =
-#     description =
-#     tweets =
-#     likes =

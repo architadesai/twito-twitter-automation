@@ -63,7 +63,6 @@ def appCallback(request, app_id):
         appAcc.accessKey = auth.access_token_secret
         appAcc.accessToken = auth.access_token
         appAcc.save()
-        # print("access key:",appAcc.accessKey," access token:",appAcc.access_token)
 
         return redirect('/dashboard/')
 
@@ -89,11 +88,8 @@ def dashboard(request):
 
             _consumerKey = request.POST['consumerKey'].strip()
             _consumerToken = request.POST['consumerToken'].strip()
-            # _access_token = request.POST['access_token'].strip()
-            # _accessKey = request.POST['accessKey'].strip()
 
             try:
-                # callback_url = 'http://127.0.0.1:8000/dashboard/callback'
 
                 auth = tweepy.OAuthHandler(_consumerKey, _consumerToken)
                 auth.get_authorization_url()
@@ -117,8 +113,7 @@ def dashboard(request):
 
                 messages.warning(
                     request,
-                    '''Error in Consumer Key/Token!
-                    Please try again with correct Twitter App Credentials!''')
+                    '''Error in Connecting Twitter...''')
 
                 return redirect('/dashboard/')
 
@@ -141,16 +136,12 @@ def dashboard(request):
 @login_required(login_url=login_url)
 def appConnect(request, app_id):
 
-    print("Connecting........")
+    print("Connecting to Twitter........")
     twitoApp = get_object_or_404(TwitterApp, id=app_id, user=request.user)
 
     try:
 
-        auth = tweepy.OAuthHandler(twitoApp.consumerKey, twitoApp.consumerToken)
-
         callbackURL = 'http://127.0.0.1:8000/dashboard/connect/' + str(app_id) + '/callback/'
-
-        # print("in auth")
 
         auth = tweepy.OAuthHandler(twitoApp.consumerKey, twitoApp.consumerToken, callbackURL)
 
@@ -158,6 +149,7 @@ def appConnect(request, app_id):
 
 
     except Exception as e:
+
         print(e)
 
         messages.warning(request, "Error occurred while connecting...")
@@ -173,7 +165,7 @@ def appPage(request, app_id):
 
         if 'locationsearch' in request.POST:
 
-            print("searchlocation")
+            print("Location Search..")
 
             form = SearchLocationForm(request.POST)
 
@@ -193,7 +185,7 @@ def appPage(request, app_id):
                     request.session['radius'] = _radius
                     request.session['radiusUnit'] = _radiusUnit
 
-                    print("form is valid")
+                    print("Form is valid")
 
                     return redirect('/dashboard/' + app_id + '/search/')
 
@@ -209,7 +201,7 @@ def appPage(request, app_id):
 
         if 'keywordsearch' in request.POST:
 
-            print("seachkeyword")
+            print("Keyword Search...")
 
             form = SerachKeywordForm(request.POST)
 
@@ -223,7 +215,7 @@ def appPage(request, app_id):
                     request.session['lang'] = _lang
                     request.session['radiusUnit'] = None
 
-                    print("form is valid")
+                    print("Form is valid")
 
 
                     return redirect('/dashboard/' + app_id + '/search/')
@@ -253,7 +245,7 @@ def appPage(request, app_id):
 
         if 'usersearch' in request.POST:
 
-            print("usersearch")
+            print("User Search...")
 
             form =SearchUserForm(request.POST)
 
@@ -262,6 +254,8 @@ def appPage(request, app_id):
                 _username = request.POST['username']
 
                 request.session['username'] = _username
+
+                print("Form is valid")
 
                 return redirect('/dashboard/' + app_id + '/searchuser/')
 
@@ -278,26 +272,24 @@ def appPage(request, app_id):
 
             appAcc = get_object_or_404(AppAccess, user=request.user, appName=twitoApp)
 
-            print("direct to function..")
             api = getAPI(twitoApp.consumerKey, twitoApp.consumerToken, appAcc.accessToken, appAcc.accessKey)
 
             if api:
                 username = (api.me()).screen_name
 
-                print("Tokens are correct")
-        ######objects to pass to html
+                print("Directing to Dashboard...")
+
+                ######objects to pass to html
                 #to get all followers or friends use cursor
-                #trends = api.trends_available()
+
                 followers = api.followers(username)  #returns user object
-                #followers_ids = api.followers_ids(username)
+
                 friends = api.friends(username)      #returns user object
 
                 tweets = api.user_timeline()             #returns status object
 
-                #lists =
                 likes = api.favorites(username)          #returns status object
 
-                #messages = api.direct_messages()
                 tasks = TasksList.objects.filter(appName=twitoApp)      #returns TaskList objects as Queryset
                 likeTasks = TaskLike.objects.filter(appName=twitoApp)
                 followTasks = TaskFollow.objects.filter(appName=twitoApp)
@@ -314,7 +306,6 @@ def appPage(request, app_id):
 
                 return redirect('/dashboard/')
 
-
         except Exception as e:
 
             print(e)
@@ -328,23 +319,19 @@ def appPage(request, app_id):
 @login_required(login_url=login_url)
 def searchTweet(request, app_id):
 
-    print("search.................")
     twitoApp = get_object_or_404(TwitterApp, id=app_id, user=request.user)
     appAcc = get_object_or_404(AppAccess, user=request.user, appName=twitoApp)
 
     api = getAPI(twitoApp.consumerKey, twitoApp.consumerToken, appAcc.accessToken, appAcc.accessKey)
 
-    #SearchId = {}  # ["userId":"MessageId"]
-
+    #maximum search result to show
     totalSearchResult = 10
+    #maximux tweets on which tasks will be performed
     performTaskOnTweets = 10
 
     if request.method != 'POST':
 
         try:
-
-            # t = TasksList(user=request.user, appName=app, TaskName="Search by User")
-            # t.save()
 
             arg_geo = request.session.get('radiusUnit')
 
@@ -392,31 +379,35 @@ def searchTweet(request, app_id):
 
                 if _like:
 
+                    print("Performing Like Task on "+str(performTaskOnTweets)+" tweets...")
                     taskObj = appendTaskList(request.user, twitoApp, "Like "+str(performTaskOnTweets)+" Tweets", True)
                     for i in taskIDs.values():
                         likeTweet(request.user, twitoApp, api, i, taskObj)
+                    print("Like Task Completed")
 
                 if _follow:
 
+                    print("Performing Follow Task on " + str(performTaskOnTweets) + " users...")
                     taskObj = appendTaskList(request.user, twitoApp, "Follow " + str(performTaskOnTweets)+" Users", True)
                     for i in taskIDs.keys():
                         followUser(request.user, twitoApp, api, username, i, taskObj)
+                    print("Follow Task Completed")
 
                 if _retweet:
 
-
+                    print("Performing reTweet Task on " + str(performTaskOnTweets) + " tweets...")
                     taskObj = appendTaskList(request.user, twitoApp, "Retweet " + str(performTaskOnTweets)+" Tweets", True)
                     for i in taskIDs.values():
                         reTweetTweet(request.user, twitoApp, api, i, taskObj)
+                    print("ReTweet Task Completed")
 
-
-                #print("Task completed")
                 return redirect('/dashboard/'+app_id+'/')
 
 
         except Exception as e:
 
             print(e)
+            messages.warning(request, "Error occurred while performing tasks...")
             return redirect('/dashboard/'+app_id+'/')
 
 
@@ -433,7 +424,36 @@ def searchUser(request, app_id):
     totalSearchResult = 10
     performTaskOnTweets = 10
 
-    if request.method != 'POST':
+    if request.method == 'POST':
+
+        try:
+
+            form = PerformTaskForm(request.POST)
+
+            if form.is_valid():
+
+                username = api.me().screen_name
+
+                _follow = request.POST.get('followUsers', None)
+
+                taskIDs = request.session.get('userIDs')
+
+                if _follow:
+
+                    print("Performing Follow Task on " + str(performTaskOnTweets) + " users...")
+                    taskObj = appendTaskList(request.user, twitoApp, "Follow " + str(performTaskOnTweets) + " Users", True)
+                    for i in taskIDs:
+                        followUser(request.user, twitoApp, api, username, i, taskObj)
+                    print("Follow Task Completed")
+
+                return redirect('/dashboard/' + app_id + '/')
+
+        except Exception as e:
+
+            print(e)
+            return redirect('/dashboard/' + app_id + '/')
+
+    else:
 
         try:
 
@@ -453,35 +473,6 @@ def searchUser(request, app_id):
             print(e)
             return redirect('/dashboard/' + app_id + '/')
 
-    else:
-
-        try:
-
-            form = PerformTaskForm(request.POST)
-
-            if form.is_valid():
-
-                username = api.me().screen_name
-
-                _follow = request.POST.get('followUsers', None)
-
-                taskIDs = request.session.get('userIDs')
-
-                # print(len(taskIDs))
-
-                if _follow:
-
-                    taskObj = appendTaskList(request.user, twitoApp, "Follow " + str(performTaskOnTweets) + " Users", True)
-                    for i in taskIDs:
-                        followUser(request.user, twitoApp, api, username, i, taskObj)
-
-
-                return redirect('/dashboard/' + app_id + '/')
-
-        except Exception as e:
-
-            print(e)
-            return redirect('/dashboard/' + app_id + '/')
 
 
 @login_required(login_url=login_url)
@@ -490,14 +481,12 @@ def deleteTwitterApp(request, app_id):
 
     app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
 
-    # t = TasksList(user=request.user, appName=app, TaskName="Application Deleted")
-    # t.save()
-
     appendTaskList(request.user, app, "Application Deleted")
 
     app.delete()
 
     return redirect('/dashboard/')
+
 
 
     # https://twitter.com/narendramodi/status/891865991503806464
