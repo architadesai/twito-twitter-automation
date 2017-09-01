@@ -56,6 +56,9 @@ class TasksList(models.Model):
     taskName = models.CharField(max_length=200)
     time = models.DateTimeField(auto_now_add=True, db_index=True)
 
+    def __str__(self):
+        return self.taskName
+
 
 class TaskLike(models.Model):
 
