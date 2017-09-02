@@ -176,6 +176,6 @@ ACCOUNT_ADAPTER = 'functions.allauth_custom.AccountAdapter'
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 
 try:
-    from .production impor *
+    from .production import *
 except ImportError:
     pass
