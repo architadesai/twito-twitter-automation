@@ -76,6 +76,7 @@ def appCallback(request, app_id):
 
     except Exception as e:
         # log this error
+        app.delete()
         print(str(e))
         messages.warning(request, 'Could not connect to twitter! Please try again.')
         return redirect('/dashboard/')
@@ -159,7 +160,7 @@ def appConnect(request, app_id):
     except Exception as e:
 
         print(e)
-
+        twitoApp.delete()
         messages.warning(request, "Error occurred while connecting...")
         return redirect('/dashboard/')
 
@@ -315,6 +316,7 @@ def appPage(request, app_id):
         except Exception as e:
 
             print(e)
+
 
             messages.warning(request,"Error Occurred, Try Again...")
 
