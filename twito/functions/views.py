@@ -15,7 +15,7 @@ from .models import (
     AppAccess,
 )
 
-from .tweepyfunc import (
+from .tasks import (
     getAPI,
     appendTaskList,
     followUser,
@@ -329,7 +329,60 @@ def searchTweet(request, app_id):
     #maximux tweets on which tasks will be performed
     performTaskOnTweets = 10
 
-    if request.method != 'POST':
+    if request.method == 'POST':
+
+
+
+        try:
+
+            form = PerformTaskForm(request.POST)
+
+            if form.is_valid():
+
+                username = api.me().screen_name
+
+                _like = request.POST.get('likeTweets', None)
+                _follow = request.POST.get('followUsers', None)
+                _retweet = request.POST.get('retweetTweets', None)
+
+
+                taskIDs = request.session.get('taskIDs')
+
+                if _like:
+
+                    print("Performing Like Task on "+str(performTaskOnTweets)+" tweets...")
+                    taskObj = appendTaskList(request.user, twitoApp, "Like "+str(performTaskOnTweets)+" Tweets", True)
+                    for i in taskIDs.values():
+                        likeTweet.delay(request.user, twitoApp, api, i, taskObj)
+                    print("Like Task Completed")
+
+                if _follow:
+
+                    print("Performing Follow Task on " + str(performTaskOnTweets) + " users...")
+                    taskObj = appendTaskList(request.user, twitoApp, "Follow " + str(performTaskOnTweets)+" Users", True)
+                    for i in taskIDs.keys():
+                        followUser.delay(request.user, twitoApp, api, username, i, taskObj)
+                    print("Follow Task Completed")
+
+                if _retweet:
+
+                    print("Performing reTweet Task on " + str(performTaskOnTweets) + " tweets...")
+                    taskObj = appendTaskList(request.user, twitoApp, "Retweet " + str(performTaskOnTweets)+" Tweets", True)
+                    for i in taskIDs.values():
+                        reTweetTweet.delay(request.user, twitoApp, api, i, taskObj)
+                    print("ReTweet Task Completed")
+
+                return redirect('/dashboard/'+app_id+'/')
+
+
+        except Exception as e:
+
+            print(e)
+            messages.warning(request, "Error occurred while performing tasks...")
+            return redirect('/dashboard/'+app_id+'/')
+
+
+    else:
 
         try:
 
@@ -360,55 +413,6 @@ def searchTweet(request, app_id):
             print(e)
             return redirect('/dashboard/'+app_id+'/')
 
-    else:
-
-        try:
-
-            form = PerformTaskForm(request.POST)
-
-            if form.is_valid():
-
-                username = api.me().screen_name
-
-                _like = request.POST.get('likeTweets', None)
-                _follow = request.POST.get('followUsers', None)
-                _retweet = request.POST.get('retweetTweets', None)
-
-
-                taskIDs = request.session.get('taskIDs')
-
-                if _like:
-
-                    print("Performing Like Task on "+str(performTaskOnTweets)+" tweets...")
-                    taskObj = appendTaskList(request.user, twitoApp, "Like "+str(performTaskOnTweets)+" Tweets", True)
-                    for i in taskIDs.values():
-                        likeTweet(request.user, twitoApp, api, i, taskObj)
-                    print("Like Task Completed")
-
-                if _follow:
-
-                    print("Performing Follow Task on " + str(performTaskOnTweets) + " users...")
-                    taskObj = appendTaskList(request.user, twitoApp, "Follow " + str(performTaskOnTweets)+" Users", True)
-                    for i in taskIDs.keys():
-                        followUser(request.user, twitoApp, api, username, i, taskObj)
-                    print("Follow Task Completed")
-
-                if _retweet:
-
-                    print("Performing reTweet Task on " + str(performTaskOnTweets) + " tweets...")
-                    taskObj = appendTaskList(request.user, twitoApp, "Retweet " + str(performTaskOnTweets)+" Tweets", True)
-                    for i in taskIDs.values():
-                        reTweetTweet(request.user, twitoApp, api, i, taskObj)
-                    print("ReTweet Task Completed")
-
-                return redirect('/dashboard/'+app_id+'/')
-
-
-        except Exception as e:
-
-            print(e)
-            messages.warning(request, "Error occurred while performing tasks...")
-            return redirect('/dashboard/'+app_id+'/')
 
 
 
@@ -443,7 +447,7 @@ def searchUser(request, app_id):
                     print("Performing Follow Task on " + str(performTaskOnTweets) + " users...")
                     taskObj = appendTaskList(request.user, twitoApp, "Follow " + str(performTaskOnTweets) + " Users", True)
                     for i in taskIDs:
-                        followUser(request.user, twitoApp, api, username, i, taskObj)
+                        followUser.delay(request.user, twitoApp, api, username, i, taskObj)
                     print("Follow Task Completed")
 
                 return redirect('/dashboard/' + app_id + '/')

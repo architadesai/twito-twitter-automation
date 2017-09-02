@@ -13,9 +13,9 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
-import djcelery
-djcelery.setup_loader()
-BROKER_URL = "amqp://guest:guest@localhost:5672//"
+# import djcelery
+# djcelery.setup_loader()
+# BROKER_URL = "amqp://guest:guest@localhost:5672//"
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -48,9 +48,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.twitter',
-    'functions',
-    'djcelery',
-
+    'functions.apps.FunctionsConfig',
 ]
 
 AUTHENTICATION_BACKENDS = (

@@ -13,6 +13,10 @@ from .models import (
     AppAccess,
 )
 
+from celery.decorators import task
+from celery.utils.log import get_task_logger
+
+logger = get_task_logger(__name__)
 
 def searchUsers(api, queryUser, uniqueUser=False, totalSearchResult = 10, totalTaskResult=10):
 
@@ -39,7 +43,6 @@ def searchUsers(api, queryUser, uniqueUser=False, totalSearchResult = 10, totalT
         print(e)
 
     return ResultObjects, TaskObjects
-
 
 
 def searchTweets(api, queryKeyword, language, location,
@@ -73,7 +76,6 @@ def searchTweets(api, queryKeyword, language, location,
 
     return ResultObjects, TaskObjects
 
-
 def getAPI(consumerKey, consumerToken, accessKey, accessToken):
 
     try:
@@ -93,14 +95,12 @@ def getAPI(consumerKey, consumerToken, accessKey, accessToken):
         print(str(e))
         return False
 
-
 def appendTaskList(userObj, appObj, taskName, Obj=False):
 
     t = TasksList(user=userObj, appName=appObj, taskName=taskName)
     t.save()
     if Obj:
         return t
-
 
 def appendTaskLike(userObj, appObj, tweetID, taskObj):
 
@@ -118,7 +118,7 @@ def appendTaskreTweet(userObj, appObj, tweetID, taskObj):
     t.save()
 
 
-
+@task(name="likeTweet")
 def likeTweet(userObj, appObj, api, tweetID, taskObj):
 
     #tweet id of tweet which should be like by user which is connected to api
@@ -144,7 +144,7 @@ def likeTweet(userObj, appObj, api, tweetID, taskObj):
         pass
 
 
-
+@task(name="followUser")
 def followUser(userObj, appObj, api, userSName, toFollowUserID, taskObj):
 
     #userSName is user screen_name
@@ -185,7 +185,7 @@ def followUser(userObj, appObj, api, userSName, toFollowUserID, taskObj):
         print(api.create_friendship(toFollowUserID).screen_name)  # follow specific user
         appendTaskFollow(userObj, appObj, toFollowUserID, taskObj)
 
-
+@task(name="reTweetTweet")
 def reTweetTweet(userObj, appObj, api, tweetID, taskObj):
 
     # tweet id of tweet which should be retweet by user which is connected to api
