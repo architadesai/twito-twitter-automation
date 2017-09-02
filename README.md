@@ -23,6 +23,10 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
 ```
+For Celery Tasks
+```
+python manage.py celery worker --loglevel=info
+```
 
 ### For the developers
 To commit changes you've made in the twito-template, go into twito-template directory and then commit and push those changes from there.
