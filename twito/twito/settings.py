@@ -174,3 +174,8 @@ ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/dashboard/'
 ACCOUNT_ADAPTER = 'functions.allauth_custom.AccountAdapter'
 
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+
+try:
+    from .production import *
+except ImportError:
+    pass
