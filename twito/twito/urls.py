@@ -21,22 +21,14 @@ urlpatterns = [
     url(r'^dashboard/connect/(?P<app_id>[\w]+)/$',
         views.appConnect, name='ConnectTwitter'),
 
-
-    url(r'^dashboard/connect/(?P<app_id>[\w]+)/callback/$',
+    url(r'^dashboard/connect/(?P<app_id>[\w]+)/callback/',
         views.appCallback, name='CallbackView'),
 
     url(r'^dashboard/(?P<app_id>[\w]+)/delete/$',
         views.deleteTwitterApp, name='twitterApp'),
 
-    # url(r'^dashboard/(?P<app_id>[\w]+)/search/$',
-    #     views.Search, kwargs={'location':True}, name='SearchByLocation'),
-    #
-    # url(r'^dashboard/(?P<app_id>[\w]+)/search/$',
-    #     views.Search, kwargs={'location':False}, name='SearchByKeyword'),
-
     url(r'^dashboard/(?P<app_id>[\w]+)/search/$',
         views.searchTweet, name='searchTweets'),
-
 
     url(r'^dashboard/(?P<app_id>[\w]+)/searchuser/$',
         views.searchUser, name='searchuser'),
