@@ -37,15 +37,13 @@ from .forms import (
 
 import tweepy
 
-login_url = '/  '
+login_url = '/'
 
 def index(request):
     return render(request, 'index.html')
 
 @login_required(login_url=login_url)
 def appCallback(request, app_id):
-
-    print("in callback url")
 
     app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
 
@@ -63,6 +61,7 @@ def appCallback(request, app_id):
         appAcc.accessKey = auth.access_token_secret
         appAcc.accessToken = auth.access_token
         appAcc.save()
+        messages.success(request, 'You have successfully added twitter app!')
         return redirect('/dashboard/')
 
     except Exception as e:
@@ -103,7 +102,7 @@ def dashboard(request):
                 print(e)
                 messages.warning(
                     request,
-                    '''Error in Connecting Twitter...''')
+                    '''Consumer key and consumer token are not valid or expired''')
                 return redirect('/dashboard/')
         else:
             print(form.errors)
@@ -137,7 +136,7 @@ def appConnect(request, app_id):
     except Exception as e:
         print(e)
         twitoApp.delete()
-        messages.warning(request, "Error occurred while connecting...")
+        messages.warning(request, "Error occurred while connecting to twitter")
         return redirect('/dashboard/')
 
 
@@ -269,10 +268,6 @@ def searchTweet(request, app_id):
                 if _like:
                     print("Performing Like Task on "+str(performTaskOnTweets)+" tweets...")     
                     taskObj = appendTaskList(request.user, twitoApp, "Like "+str(performTaskOnTweets)+" Tweets", True)
-                    # for i in taskIDs.values():
-                    #     likeTweet.delay(request.user, twitoApp, api, i, taskObj)
-
-                    #print("#Into _like....")
                     likeAllTweets.delay(request.user.id, twitoApp.id, taskObj.id, taskIDs)
 
                 if _follow:
@@ -288,14 +283,14 @@ def searchTweet(request, app_id):
                     reTweetAllTweets.delay(request.user.id, twitoApp.id, taskObj.id, taskIDs)
                     #print("ReTweet Task Completed")
 
-                #messages.success(request, "All Tasks performed successfully")s
+                messages.success(request, "Tasks are scheduled, will be performed in meantime.")
                 return redirect('/dashboard/'+app_id+'/')
 
 
         except Exception as e:
 
             print(e)
-            messages.warning(request, "Error occurred while performing tasks...")
+            messages.warning(request, "Error occurred while performing tasks, Try again.")
             return redirect('/dashboard/'+app_id+'/')
     else:
         try:
@@ -343,11 +338,12 @@ def searchUser(request, app_id):
                     taskObj = appendTaskList(request.user, twitoApp, "Follow " + str(performTaskOnTweets) + " Users", True)
                     followAllUsers.delay(request.user.id, twitoApp.id, taskObj.id, taskIDs)
     
+                messages.success(request, "Tasks are scheduled, will be performed in meantime.")
                 return redirect('/dashboard/' + app_id + '/')
 
         except Exception as e:
             print(e)
-            messages.warning(request, "Error occurred while performing tasks...")
+            messages.warning(request, "Error occurred while performing tasks, Try again.")
             return redirect('/dashboard/' + app_id + '/')
     else:
         try:
@@ -371,6 +367,7 @@ def deleteTwitterApp(request, app_id):
     app = get_object_or_404(TwitterApp, id=app_id, user=request.user)
     appendTaskList(request.user, app, "Application Deleted")
     app.delete()
+    messages.success(request, "Twitter App deleted successfully.")
     return redirect('/dashboard/')
 
 
